@@ -21,7 +21,7 @@ from ml_library import (
 def main():
     """Run a complete example using breast cancer dataset."""
     # Load the dataset
-    # The IDE type checker may show errors for sklearn Bunch attributes, but the code runs fine
+    # The IDE may show errors for sklearn Bunch attrs but code runs fine
     dataset = load_breast_cancer()
     # pylint: disable=no-member
     X = dataset.data  # type: ignore

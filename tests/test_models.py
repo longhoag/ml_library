@@ -1,7 +1,7 @@
 """Tests for model implementations."""
 
 import os
-from typing import Any, Dict, Generator, Optional, Tuple, Type
+from typing import Any, Dict, Optional, Tuple, Type
 
 import numpy as np
 import pytest

@@ -37,9 +37,13 @@ from ml_library.models import (
     RandomForestRegressorModel,
 )
 
-# Import preprocessing utilities (ignore type errors as these are correctly defined in the module)
-from ml_library.preprocessing import PolynomialPreprocessor  # type: ignore
-from ml_library.preprocessing import FeatureSelector, Preprocessor, StandardPreprocessor
+# Import preprocessing utilities (ignore type errors)
+from ml_library.preprocessing import (  # type: ignore
+    FeatureSelector,
+    PolynomialPreprocessor,
+    Preprocessor,
+    StandardPreprocessor,
+)
 
 # Import utility functions
 from ml_library.utils import check_data, cross_validate, train_test_split

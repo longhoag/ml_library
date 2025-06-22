@@ -97,10 +97,11 @@ def test_invalid_parameter_error():
     error = InvalidParameterError(
         "activation", "tanh", allowed_values=["relu", "sigmoid"]
     )
-    assert (
-        str(error)
-        == "Invalid value for parameter 'activation': tanh, allowed values are: ['relu', 'sigmoid']"
+    expected_msg = (
+        "Invalid value for parameter 'activation': tanh, "
+        "allowed values are: ['relu', 'sigmoid']"
     )
+    assert str(error) == expected_msg
     assert error.allowed_values == ["relu", "sigmoid"]
 
     # Test with custom message
@@ -138,10 +139,11 @@ def test_preprocessing_error():
         preprocessor_type="PolynomialFeatures",
         data_shape=(50, 5),
     )
-    assert (
-        str(error)
-        == "Feature extraction failed (preprocessor: PolynomialFeatures, data shape: (50, 5))"
+    expected = (
+        "Feature extraction failed (preprocessor: PolynomialFeatures, "
+        "data shape: (50, 5))"
     )
+    assert str(error) == expected
     assert error.preprocessor_type == "PolynomialFeatures"
     assert error.data_shape == (50, 5)
 
@@ -160,10 +162,11 @@ def test_validation_error():
     # Test with context
     context = {"param": "n_clusters", "min_value": 2}
     error = ValidationError("Invalid clustering parameters", context=context)
-    assert (
-        str(error)
-        == "Invalid clustering parameters (context: {'param': 'n_clusters', 'min_value': 2})"
+    expected = (
+        "Invalid clustering parameters (context: "
+        "{'param': 'n_clusters', 'min_value': 2})"
     )
+    assert str(error) == expected
     assert error.context == context
 
 

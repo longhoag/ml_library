@@ -4,7 +4,6 @@ from typing import Any, Dict, List, Optional, Tuple
 
 import numpy as np
 from numpy.typing import NDArray
-from sklearn.model_selection import train_test_split as sk_train_test_split
 from sklearn.utils import check_array, check_consistent_length
 
 from ml_library.exceptions import DataError

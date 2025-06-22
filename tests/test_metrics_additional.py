@@ -4,9 +4,7 @@ import unittest
 import numpy as np
 import pytest
 
-from ml_library.metrics import (
-    accuracy, f1, mae, mse, precision, r2, recall, roc_auc
-)
+from ml_library.metrics import accuracy, f1, precision, r2, recall, roc_auc
 
 
 class TestMetricsEdgeCases(unittest.TestCase):
@@ -16,11 +14,11 @@ class TestMetricsEdgeCases(unittest.TestCase):
         """Test precision when there are no predicted positives."""
         y_true = np.array([0, 0, 0, 0], dtype=np.float64)
         y_pred = np.array([0, 0, 0, 0], dtype=np.float64)
-        
+
         # Default behavior
         result = precision(y_true, y_pred)
         self.assertEqual(result, 0.0)
-        
+
         # Custom zero_division value
         result = precision(y_true, y_pred, zero_division=0.5)
         self.assertEqual(result, 0.5)
@@ -29,11 +27,11 @@ class TestMetricsEdgeCases(unittest.TestCase):
         """Test recall when there are no actual positives."""
         y_true = np.array([0, 0, 0, 0], dtype=np.float64)
         y_pred = np.array([1, 0, 1, 0], dtype=np.float64)
-        
+
         # Default behavior
         result = recall(y_true, y_pred)
         self.assertEqual(result, 0.0)
-        
+
         # Custom zero_division value
         result = recall(y_true, y_pred, zero_division=0.5)
         self.assertEqual(result, 0.5)
@@ -43,17 +41,17 @@ class TestMetricsEdgeCases(unittest.TestCase):
         # Case 1: No predicted positives
         y_true = np.array([1, 1, 1, 1], dtype=np.float64)
         y_pred = np.array([0, 0, 0, 0], dtype=np.float64)
-        
+
         result = f1(y_true, y_pred)
         self.assertEqual(result, 0.0)
-        
+
         # Case 2: No true positives, but both predicted and actual positives exist
         y_true = np.array([1, 1, 0, 0], dtype=np.float64)
         y_pred = np.array([0, 0, 1, 1], dtype=np.float64)
-        
+
         result = f1(y_true, y_pred)
         self.assertEqual(result, 0.0)
-        
+
         # Case 3: Custom zero_division value
         result = f1(y_true, y_pred, zero_division=0.5)
         self.assertEqual(result, 0.5)
@@ -62,7 +60,7 @@ class TestMetricsEdgeCases(unittest.TestCase):
         """Test R² score when all true values are the same."""
         y_true = np.array([5, 5, 5, 5], dtype=np.float64)
         y_pred = np.array([4, 6, 5, 7], dtype=np.float64)
-        
+
         result = r2(y_true, y_pred)
         self.assertEqual(result, 0.0)
 
@@ -71,21 +69,21 @@ class TestMetricsEdgeCases(unittest.TestCase):
         # Case 1: No positive samples
         y_true = np.array([0, 0, 0, 0], dtype=np.float64)
         y_scores = np.array([0.1, 0.2, 0.3, 0.4], dtype=np.float64)
-        
+
         result = roc_auc(y_true, y_scores)
         self.assertEqual(result, 0.5)
-        
+
         # Case 2: No negative samples
         y_true = np.array([1, 1, 1, 1], dtype=np.float64)
         y_scores = np.array([0.1, 0.2, 0.3, 0.4], dtype=np.float64)
-        
+
         result = roc_auc(y_true, y_scores)
         self.assertEqual(result, 0.5)
-        
+
         # Case 3: Perfect separation
         y_true = np.array([0, 0, 1, 1], dtype=np.float64)
         y_scores = np.array([0.1, 0.2, 0.8, 0.9], dtype=np.float64)
-        
+
         result = roc_auc(y_true, y_scores)
         self.assertAlmostEqual(result, 1.0)
 
@@ -94,18 +92,24 @@ class TestMetricsEdgeCases(unittest.TestCase):
     "y_true, y_pred, expected",
     [
         # All correct
-        (np.array([0, 0, 1, 1], dtype=np.float64), 
-         np.array([0, 0, 1, 1], dtype=np.float64), 
-         1.0),
+        (
+            np.array([0, 0, 1, 1], dtype=np.float64),
+            np.array([0, 0, 1, 1], dtype=np.float64),
+            1.0,
+        ),
         # All wrong
-        (np.array([0, 0, 1, 1], dtype=np.float64), 
-         np.array([1, 1, 0, 0], dtype=np.float64), 
-         0.0),
+        (
+            np.array([0, 0, 1, 1], dtype=np.float64),
+            np.array([1, 1, 0, 0], dtype=np.float64),
+            0.0,
+        ),
         # Half correct
-        (np.array([0, 0, 1, 1], dtype=np.float64), 
-         np.array([0, 1, 1, 0], dtype=np.float64), 
-         0.5),
-    ]
+        (
+            np.array([0, 0, 1, 1], dtype=np.float64),
+            np.array([0, 1, 1, 0], dtype=np.float64),
+            0.5,
+        ),
+    ],
 )
 def test_accuracy_parametrized(y_true, y_pred, expected):
     """Test accuracy with various scenarios using parametrization."""

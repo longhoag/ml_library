@@ -1,6 +1,6 @@
 """Visualization utilities."""
 
-from typing import List, Optional, Sequence
+from typing import Optional, Sequence
 
 import matplotlib.pyplot as plt
 import numpy as np

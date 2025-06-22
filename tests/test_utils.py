@@ -1,9 +1,7 @@
 """Test utility functions."""
 import unittest
-from typing import Any
 
 import numpy as np
-from numpy.typing import NDArray
 
 from ml_library.utils import train_test_split
 
@@ -52,10 +50,10 @@ class TestUtils(unittest.TestCase):
 
     def test_train_test_split_different_random_states(self) -> None:
         """Test different splits with different random states."""
-        X_train1, X_test1, y_train1, y_test1 = train_test_split(
+        X_train1, _, _, _ = train_test_split(
             self.X, self.y, test_size=0.2, random_state=42
         )
-        X_train2, X_test2, y_train2, y_test2 = train_test_split(
+        X_train2, _, _, _ = train_test_split(
             self.X, self.y, test_size=0.2, random_state=43
         )
 

@@ -47,8 +47,8 @@ def configure_logging(
     Parameters
     ----------
     level : str or int, default="info"
-        The logging level. Can be a string ('debug', 'info', 'warning', 'error', 'critical')
-        or an integer constant from the logging module.
+        The logging level. Can be a string ('debug', 'info', 'warning', 'error',
+        'critical') or an integer constant from the logging module.
     log_file : str, optional
         If provided, logging will also be directed to this file.
     format_string : str, optional

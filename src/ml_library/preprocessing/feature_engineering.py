@@ -88,7 +88,7 @@ class FeatureSelector(Preprocessor):
 
         Args:
             k: Number of features to select. Required if feature_indices is None.
-            feature_indices: Specific feature indices to select. If provided, k is ignored.
+            feature_indices: Indices to select. If provided, k is ignored.
 
         Raises:
             ValueError: If k is less than 1 and feature_indices is None.
@@ -119,7 +119,8 @@ class FeatureSelector(Preprocessor):
             self: Fitted instance.
 
         Raises:
-            PreprocessingError: If input is not valid or k is greater than number of features.
+            PreprocessingError: If input is not valid or k is greater than
+                number of features.
             ValueError: If input array is empty.
         """
         try:
@@ -128,12 +129,13 @@ class FeatureSelector(Preprocessor):
 
             self._n_features = X.shape[1]
 
-            # If feature_indices were provided in __init__, use those instead of calculating
+            # If feature_indices provided in __init__, use those
             if self.feature_indices is not None:
                 # Validate feature indices
                 if np.any(self.feature_indices >= self._n_features):
                     raise ValueError(
-                        f"Feature index out of range. Max index is {self._n_features - 1}"
+                        f"Feature index out of range. "
+                        f"Max index is {self._n_features - 1}"
                     )
                 self.fitted = True
                 return self
@@ -141,7 +143,8 @@ class FeatureSelector(Preprocessor):
             # Otherwise select based on variance
             if self.k > self._n_features:
                 raise ValueError(
-                    f"k ({self.k}) must not be greater than number of features ({self._n_features})"
+                    f"k ({self.k}) must not be greater than "
+                    f"number of features ({self._n_features})"
                 )
 
             # Calculate variance scores
@@ -176,7 +179,8 @@ class FeatureSelector(Preprocessor):
         try:
             if X.shape[1] != self._n_features:
                 raise ValueError(
-                    f"Shape of input is {X.shape}, but expected ({X.shape[0]}, {self._n_features})"
+                    f"Shape of input is {X.shape}, but "
+                    f"expected ({X.shape[0]}, {self._n_features})"
                 )
             return X[:, self.feature_indices]
         except Exception as e:
@@ -189,7 +193,8 @@ class FeatureSelector(Preprocessor):
         """Get a boolean mask indicating selected features.
 
         Returns:
-            Boolean array of shape [n_features], where True indicates a selected feature.
+            Boolean array of shape [n_features], where True indicates a selected
+            feature.
 
         Raises:
             PreprocessingError: If not fitted.

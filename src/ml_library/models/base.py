@@ -3,7 +3,6 @@
 from typing import Any, Dict, Optional
 
 import joblib
-import numpy as np
 from numpy.typing import NDArray
 
 from ml_library.exceptions import NotFittedError

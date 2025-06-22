@@ -330,18 +330,18 @@ class TestMinMaxScaler:
 
         assert scaler.fitted
         assert result is scaler
-        
+
         # Check attributes are not None before comparing
         assert scaler.data_min_ is not None
         assert scaler.data_max_ is not None
         assert scaler.data_range_ is not None
         assert scaler.min_ is not None
         assert scaler.scale_ is not None
-        
+
         assert np.array_equal(scaler.data_min_, np.array([1, 2]))
         assert np.array_equal(scaler.data_max_, np.array([3, 4]))
         assert np.array_equal(scaler.data_range_, np.array([2, 2]))
-        
+
         # For feature range (0, 1), the formula is min_ = 0 - data_min * scale_
         # and scale_ = 1 / data_range_ for this case
         expected_min = np.array([0, 0]) - np.array([1, 2]) * (1.0 / np.array([2, 2]))

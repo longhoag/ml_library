@@ -106,9 +106,10 @@ class StandardPreprocessor(Preprocessor):
     Parameters
     ----------
     numerical_features : list or None, default=None
-        Indices of numerical features. If None, all features are assumed to be numerical.
+        Indices of numerical features. If None, all features are numerical.
     categorical_features : list or None, default=None
-        Indices of categorical features. If None, no features are assumed to be categorical.
+        Indices of categorical features. If None, no features are assumed to be
+        categorical.
     """
 
     def __init__(self, numerical_features=None, categorical_features=None):

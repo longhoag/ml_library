@@ -1,7 +1,6 @@
 """Linear model implementations."""
 
 import numpy as np
-from sklearn.exceptions import NotFittedError as SklearnNotFittedError
 from sklearn.linear_model import LinearRegression, LogisticRegression
 from sklearn.metrics import (
     accuracy_score,

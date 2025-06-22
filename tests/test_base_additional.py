@@ -55,9 +55,10 @@ class TestModelBase(unittest.TestCase):
         """Test save and load methods of base model."""
         model = Model()
         model.fitted = True  # Need to set this manually for testing
-        
-        # Add a custom attribute directly to the instance's __dict__ to avoid type checking issues
-        model.__dict__["some_attr"] = "test_value"  # Add a custom attribute for testing
+
+        # Add a custom attribute directly to avoid type checking
+        # Add a test attribute
+        model.__dict__["some_attr"] = "test_value"
 
         # Create a temporary file
         with tempfile.NamedTemporaryFile(delete=False, suffix=".joblib") as temp:
@@ -82,12 +83,12 @@ class TestModelBase(unittest.TestCase):
 
 class MockModel(Model):
     """Mock model implementation for testing Model base class."""
-    
+
     def train(self, X: NDArray, y: NDArray, **kwargs) -> "MockModel":
         """Mock implementation of train."""
         self.fitted = True
         return self
-    
+
     def predict(self, X: NDArray, **kwargs) -> NDArray:
         """Mock implementation of predict."""
         if not self.fitted:
@@ -100,12 +101,12 @@ def test_mock_model():
     model = MockModel()
     X = np.array([[1, 2], [3, 4]])
     y = np.array([0, 1])
-    
+
     # Test train method
     returned_model = model.train(X, y)
     assert returned_model is model
     assert model.fitted is True
-    
+
     # Test predict method
     pred = model.predict(X)
     assert isinstance(pred, np.ndarray)
@@ -117,6 +118,6 @@ def test_str_and_repr():
     model = Model()
     str_rep = str(model)
     repr_rep = repr(model)
-    
+
     assert "Model" in str_rep
     assert "Model" in repr_rep

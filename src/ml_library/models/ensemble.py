@@ -143,7 +143,7 @@ class RandomForestModel(Model):
             # Add roc_auc score for binary classification
             try:
                 y_proba = self.predict_proba(X)
-                # For binary classification, we need the probability of the positive class
+                # For binary classification, need probability of positive class
                 if y_proba.shape[1] == 2:
                     from sklearn.metrics import roc_auc_score
 
@@ -177,10 +177,9 @@ class RandomForestModel(Model):
                     roc_auc_score(y, y_proba, multi_class="ovr", average="macro")
                 )
             except (ValueError, AttributeError):
-                # Handle cases where probabilities can't be computed or model doesn't support it
-                metrics_dict["roc_auc"] = float(
-                    0.5
-                )  # Default value if calculation fails
+                # Handle cases where probabilities can't be computed
+                # Default value if calculation fails
+                metrics_dict["roc_auc"] = float(0.5)
 
         # Update with additional metrics if provided
         if metrics:
