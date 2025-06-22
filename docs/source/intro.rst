@@ -3,7 +3,7 @@ Introduction
 
 ML Library is a comprehensive machine learning library designed for simplicity, flexibility,
 and production readiness. It provides a clean and intuitive API for common machine learning
-tasks, with a focus on quality, testing, and documentation. The library is highly tested 
+tasks, with a focus on quality, testing, and documentation. The library is highly tested
 with >95% code coverage and fully type-annotated.
 
 Features

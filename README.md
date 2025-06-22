@@ -27,8 +27,8 @@ pip install ml-library
 ```python
 from ml_library import (
     LogisticModel,
-    StandardPreprocessor, 
-    configure_logging, 
+    StandardPreprocessor,
+    configure_logging,
     get_logger,
     accuracy
 )
@@ -44,12 +44,12 @@ try:
     X, y = make_classification(
         n_samples=1000, n_features=20, n_informative=10, random_state=42
     )
-    
+
     # Split the data into training and testing sets
     X_train, X_test, y_train, y_test = train_test_split(
         X, y, test_size=0.2, random_state=42
     )
-    
+
     # Preprocess the data
     preprocessor = StandardPreprocessor()
     X_train_processed = preprocessor.fit_transform(X_train)
@@ -62,7 +62,7 @@ try:
     # Evaluate
     metrics = model.evaluate(X_test_processed, y_test)
     logger.info("Model accuracy: %.4f", metrics["accuracy"])
-    
+
     # You can also use individual metrics
     acc = accuracy(y_test, model.predict(X_test_processed))
     logger.info("Accuracy calculated manually: %.4f", acc)
