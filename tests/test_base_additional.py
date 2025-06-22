@@ -5,7 +5,6 @@ import tempfile
 import unittest
 
 import numpy as np
-import pytest
 from numpy.typing import NDArray
 
 from ml_library.exceptions import NotFittedError
@@ -56,7 +55,9 @@ class TestModelBase(unittest.TestCase):
         """Test save and load methods of base model."""
         model = Model()
         model.fitted = True  # Need to set this manually for testing
-        model.some_attr = "test_value"  # Add a custom attribute for testing
+        
+        # Add a custom attribute directly to the instance's __dict__ to avoid type checking issues
+        model.__dict__["some_attr"] = "test_value"  # Add a custom attribute for testing
 
         # Create a temporary file
         with tempfile.NamedTemporaryFile(delete=False, suffix=".joblib") as temp:
@@ -72,7 +73,7 @@ class TestModelBase(unittest.TestCase):
             # Test load method
             new_model = Model().load(temp_filename)
             self.assertTrue(new_model.fitted)
-            self.assertEqual(new_model.some_attr, "test_value")
+            self.assertEqual(new_model.__dict__["some_attr"], "test_value")
         finally:
             # Clean up
             if os.path.exists(temp_filename):

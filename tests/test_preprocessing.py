@@ -120,8 +120,9 @@ class TestStandardPreprocessor:
 
         # Test transformation
         transformed = preprocessor.transform(X)
-        # Should have one-hot encoded categorical feature (2 columns) plus 2 numerical features
-        assert transformed.shape[1] >= len(numerical_features) + 2
+        # One-hot encoded categorical feature (2 cols) plus numerical features
+        expected_min_columns = len(numerical_features) + 2
+        assert transformed.shape[1] >= expected_min_columns
 
 
 class TestPolynomialPreprocessor:
@@ -217,6 +218,8 @@ class TestStandardScaler:
 
         assert scaler.fitted
         assert result is scaler
+        assert scaler.mean_ is not None
+        assert scaler.scale_ is not None
         assert np.array_equal(scaler.mean_, np.array([2, 3]))
         assert np.array_equal(scaler.scale_, np.array([1, 1]))
 
@@ -327,9 +330,18 @@ class TestMinMaxScaler:
 
         assert scaler.fitted
         assert result is scaler
+        
+        # Check attributes are not None before comparing
+        assert scaler.data_min_ is not None
+        assert scaler.data_max_ is not None
+        assert scaler.data_range_ is not None
+        assert scaler.min_ is not None
+        assert scaler.scale_ is not None
+        
         assert np.array_equal(scaler.data_min_, np.array([1, 2]))
         assert np.array_equal(scaler.data_max_, np.array([3, 4]))
         assert np.array_equal(scaler.data_range_, np.array([2, 2]))
+        
         # For feature range (0, 1), the formula is min_ = 0 - data_min * scale_
         # and scale_ = 1 / data_range_ for this case
         expected_min = np.array([0, 0]) - np.array([1, 2]) * (1.0 / np.array([2, 2]))

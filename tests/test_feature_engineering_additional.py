@@ -2,7 +2,6 @@
 
 import numpy as np
 import pytest
-from sklearn.exceptions import NotFittedError
 
 from ml_library.exceptions import PreprocessingError
 from ml_library.preprocessing.feature_engineering import (
@@ -101,11 +100,20 @@ class TestPolynomialPreprocessorEdgeCases:
         X = np.array([[1, 2], [3, 4]])
         poly = PolynomialPreprocessor(degree=2)
         
-        # Force an error in the transformer
-        poly.transformer = None
+        # Use monkey patching to simulate a problematic transformer
+        from types import MethodType
+        
+        def mock_fit(self, X, y=None):
+            raise ValueError("Simulated fit error")
+            
+        # Apply mock to transformer
+        poly.transformer.fit = MethodType(mock_fit, poly.transformer)
         
         with pytest.raises(PreprocessingError):
             poly.fit_transform(X)
+            
+        # Clean up by creating a new instance
+        poly = PolynomialPreprocessor(degree=2)
     
     def test_transform_error_handling(self):
         """Test error handling in transform method."""
@@ -113,8 +121,14 @@ class TestPolynomialPreprocessorEdgeCases:
         poly = PolynomialPreprocessor(degree=2)
         poly.fit(X)
         
-        # Force an error in the transformer
-        poly.transformer = None
+        # Use monkey patching to simulate a problematic transformer
+        from types import MethodType
+        
+        def mock_transform(self, X):
+            raise ValueError("Simulated transform error")
+            
+        # Apply mock to transformer
+        poly.transformer.transform = MethodType(mock_transform, poly.transformer)
         
         with pytest.raises(PreprocessingError):
             poly.transform(X)

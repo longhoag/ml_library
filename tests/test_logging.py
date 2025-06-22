@@ -6,7 +6,7 @@ import tempfile
 
 import pytest
 
-from ml_library.logging import DEFAULT_FORMAT, configure_logging, get_logger
+from ml_library.logging import configure_logging, get_logger
 
 
 def test_get_logger():

@@ -3,7 +3,6 @@
 import numpy as np
 import pytest
 from sklearn.datasets import make_classification, make_regression
-from sklearn.exceptions import NotFittedError as SklearnNotFittedError
 
 from ml_library.exceptions import DataError, NotFittedError
 from ml_library.models.linear import LinearModel, LogisticModel
@@ -13,7 +12,7 @@ from ml_library.models.linear import LinearModel, LogisticModel
 def classification_data():
     """Generate sample classification data."""
     X, y = make_classification(
-        n_samples=100, n_features=5, n_informative=3, n_redundant=1, 
+        n_samples=100, n_features=5, n_informative=3, n_redundant=1,
         n_classes=2, random_state=42
     )
     X_train, X_test = X[:80], X[80:]
@@ -25,7 +24,7 @@ def classification_data():
 def regression_data():
     """Generate sample regression data."""
     X, y, _ = make_regression(
-        n_samples=100, n_features=5, n_informative=3, random_state=42, 
+        n_samples=100, n_features=5, n_informative=3, random_state=42,
         coef=True
     )
     X_train, X_test = X[:80], X[80:]
@@ -57,9 +56,15 @@ class TestLinearModelProperties:
         # Create a test scenario where evaluation would fail
         original_predict = model.predict
         
+        # Use monkeypatch approach using a bound method
+        from types import MethodType
+        
+        def mock_predict(self, X, **kwargs):
+            raise ValueError("Test error")
+        
         try:
-            # Replace predict with a function that raises an error
-            model.predict = lambda X: exec('raise ValueError("Test error")')
+            # Replace predict with a method that raises an error
+            model.predict = MethodType(mock_predict, model)
             
             with pytest.raises(DataError):
                 model.evaluate(X_test, y_test)
@@ -105,9 +110,15 @@ class TestLogisticModelProperties:
         # Create a test scenario where evaluation would fail
         original_predict = model.predict
         
+        # Use monkeypatch approach using a bound method
+        from types import MethodType
+        
+        def mock_predict(self, X, **kwargs):
+            raise ValueError("Test error")
+        
         try:
-            # Replace predict with a function that raises an error
-            model.predict = lambda X: exec('raise ValueError("Test error")')
+            # Replace predict with a method that raises an error
+            model.predict = MethodType(mock_predict, model)
             
             with pytest.raises(DataError):
                 model.evaluate(X_test, y_test)
