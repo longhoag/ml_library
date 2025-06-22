@@ -40,6 +40,23 @@ print(f"Model accuracy: {score}")
 model.save("model.pkl")
 ```
 
+## Testing
+
+The library has a comprehensive test suite using pytest. To run the tests:
+
+```bash
+# Run all tests
+python -m pytest
+
+# Run tests with coverage report
+python -m pytest --cov=ml_library
+
+# Generate HTML coverage report
+python -m pytest --cov=ml_library --cov-report=html
+```
+
+For more details on testing, see [tests/README.md](tests/README.md).
+
 ## Documentation
 
 Full documentation is available at [docs link].
