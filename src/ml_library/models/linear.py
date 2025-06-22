@@ -108,7 +108,9 @@ class LinearModel(Model):
             return self.model.predict(X)
         except Exception as e:
             logger.exception("Error predicting with LinearModel: %s", str(e))
-            raise DataError(f"Error predicting: {str(e)}", data_shape=np.shape(X)) from e
+            raise DataError(
+                f"Error predicting: {str(e)}", data_shape=np.shape(X)
+            ) from e
 
     def evaluate(self, X, y, metrics=None):
         """Evaluate the linear regression model.
@@ -157,7 +159,9 @@ class LinearModel(Model):
             return metrics_dict
         except Exception as e:
             logger.exception("Error evaluating LinearModel: %s", str(e))
-            raise DataError(f"Error evaluating: {str(e)}", data_shape=np.shape(X)) from e
+            raise DataError(
+                f"Error evaluating: {str(e)}", data_shape=np.shape(X)
+            ) from e
 
     @property
     def coef_(self):
@@ -201,7 +205,9 @@ class LogisticModel(Model):
         self.fit_intercept = fit_intercept
         self.C = C
         self.max_iter = max_iter
-        self.model = LogisticRegression(fit_intercept=fit_intercept, C=C, max_iter=max_iter)
+        self.model = LogisticRegression(
+            fit_intercept=fit_intercept, C=C, max_iter=max_iter
+        )
 
     def train(self, X, y, **kwargs):
         """Train the logistic regression model.
@@ -226,7 +232,9 @@ class LogisticModel(Model):
             If there is an issue with the input data.
         """
         try:
-            logger.info("Training LogisticModel with data of shape %s", str(np.shape(X)))
+            logger.info(
+                "Training LogisticModel with data of shape %s", str(np.shape(X))
+            )
             self.model.fit(X, y)
             self.fitted = True
             logger.debug("LogisticModel successfully trained")
@@ -269,7 +277,9 @@ class LogisticModel(Model):
             return self.model.predict(X)
         except Exception as e:
             logger.exception("Error predicting with LogisticModel: %s", str(e))
-            raise DataError(f"Error predicting: {str(e)}", data_shape=np.shape(X)) from e
+            raise DataError(
+                f"Error predicting: {str(e)}", data_shape=np.shape(X)
+            ) from e
 
     def predict_proba(self, X):
         """Predict class probabilities.
@@ -292,7 +302,9 @@ class LogisticModel(Model):
             If there is an issue with the input data.
         """
         if not self.fitted:
-            logger.error("Attempted to predict probabilities with untrained LogisticModel")
+            logger.error(
+                "Attempted to predict probabilities with untrained LogisticModel"
+            )
             raise NotFittedError(
                 "Model must be trained before prediction", model_type="LogisticModel"
             )
@@ -355,7 +367,9 @@ class LogisticModel(Model):
             return metrics_dict
         except Exception as e:
             logger.exception("Error evaluating LogisticModel: %s", str(e))
-            raise DataError(f"Error evaluating: {str(e)}", data_shape=np.shape(X)) from e
+            raise DataError(
+                f"Error evaluating: {str(e)}", data_shape=np.shape(X)
+            ) from e
 
     @property
     def coef_(self):

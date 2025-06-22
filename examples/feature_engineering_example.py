@@ -20,8 +20,12 @@ def main():
     """Run feature engineering example."""
     # Generate synthetic regression data with only 5 informative features
     X, y, _ = make_regression(
-        n_samples=200, n_features=20, n_informative=5, noise=20, random_state=42,
-        coef=True  # correct parameter name is 'coef', not 'return_coef'
+        n_samples=200,
+        n_features=20,
+        n_informative=5,
+        noise=20,
+        random_state=42,
+        coef=True,  # correct parameter name is 'coef', not 'return_coef'
     )
 
     print(f"Dataset shape: {X.shape}")
@@ -81,8 +85,8 @@ def main():
     print(f"MSE: {mse_selected: .4f}")
 
     # Plot feature importance scores
-    # Check if scores_ exists and is not None 
-    feature_scores = getattr(selector, 'scores_', None)
+    # Check if scores_ exists and is not None
+    feature_scores = getattr(selector, "scores_", None)
     if feature_scores is not None:
         plt.figure(figsize=(10, 6))
         plt.bar(range(len(feature_scores)), feature_scores)

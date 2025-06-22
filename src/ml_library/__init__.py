@@ -17,7 +17,16 @@ from ml_library.exceptions import (
 from ml_library.logging import configure_logging, get_logger
 
 # Import metrics (ignore type errors as these are correctly defined in the module)
-from ml_library.metrics import accuracy, f1, mae, mse, precision, r2, recall, roc_auc  # type: ignore
+from ml_library.metrics import (  # type: ignore
+    accuracy,
+    f1,
+    mae,
+    mse,
+    precision,
+    r2,
+    recall,
+    roc_auc,
+)
 
 # Import models
 from ml_library.models import (
@@ -29,12 +38,8 @@ from ml_library.models import (
 )
 
 # Import preprocessing utilities (ignore type errors as these are correctly defined in the module)
-from ml_library.preprocessing import (
-    FeatureSelector,
-    PolynomialPreprocessor,  # type: ignore
-    Preprocessor,
-    StandardPreprocessor,
-)
+from ml_library.preprocessing import PolynomialPreprocessor  # type: ignore
+from ml_library.preprocessing import FeatureSelector, Preprocessor, StandardPreprocessor
 
 # Import utility functions
 from ml_library.utils import check_data, cross_validate, train_test_split

@@ -212,7 +212,7 @@ def roc_auc(y_true: NDArray[np.float64], y_score: NDArray[np.float64]) -> float:
 
     # Calculate AUC using trapezoidal rule
     # Use trapezoid instead of trapz (which is deprecated)
-    if hasattr(np, 'trapezoid'):
+    if hasattr(np, "trapezoid"):
         return float(np.trapezoid(tpr, fpr))
     else:
         # Fallback to trapz for older numpy versions

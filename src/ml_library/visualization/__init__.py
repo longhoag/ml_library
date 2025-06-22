@@ -33,9 +33,7 @@ def plot_learning_curve(model, X, y, cv=5, n_jobs=None):
     train_sizes = np.linspace(0.1, 1.0, 10)
     # learning_curve returns train_sizes_abs, train_scores, test_scores
     # and if return_times=True, it also returns fit_times and score_times
-    results = learning_curve(
-        model, X, y, cv=cv, n_jobs=n_jobs, train_sizes=train_sizes
-    )
+    results = learning_curve(model, X, y, cv=cv, n_jobs=n_jobs, train_sizes=train_sizes)
     train_sizes, train_scores, test_scores = results[0], results[1], results[2]
 
     train_mean = np.mean(train_scores, axis=1)

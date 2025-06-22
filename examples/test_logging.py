@@ -1,6 +1,7 @@
 """Utility script to test logging configuration."""
 
 import argparse
+import numpy as np
 
 from ml_library.exceptions import (
     DataError,
@@ -77,7 +78,7 @@ def test_error_handling():
         logger.info("Testing NotFittedError...")
         model = LinearModel()
         # Should raise NotFittedError
-        model.predict([[1, 2, 3]])
+        model.predict(np.array([[1, 2, 3]]))
     except NotFittedError as e:
         logger.exception("Caught NotFittedError: %s", str(e))
 

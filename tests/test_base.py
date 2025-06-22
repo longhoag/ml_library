@@ -12,6 +12,7 @@ def test_preprocessor_init():
 def test_preprocessor_fit():
     """Test that preprocessor fit method works."""
     import numpy as np
+
     preprocessor = Preprocessor()
     X = np.array([[1, 2], [3, 4]])
     y = np.array([0, 1])
@@ -37,6 +38,7 @@ def test_model_train():
     # Model is abstract base class, can't be instantiated directly
     # So we use a concrete subclass for testing
     import numpy as np
+
     from ml_library.models.linear import LinearModel
 
     model = LinearModel()

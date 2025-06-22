@@ -11,6 +11,33 @@ from ml_library.exceptions import NotFittedError
 from ml_library.models import Model
 
 
+# Define MockModel outside fixture to make it picklable
+class MockModel(Model):
+    """Mock model for testing."""
+
+    def train(self, X: NDArray[Any], y: NDArray[Any], **kwargs: Any) -> Model:
+        """Train the model."""
+        self.fitted = True
+        return self
+
+    def predict(self, X: NDArray[Any], **kwargs: Any) -> NDArray[Any]:
+        """Make predictions."""
+        if not self.fitted:
+            raise NotFittedError("Model not trained")
+        return np.zeros(len(X), dtype=np.float64)
+
+    def evaluate(
+        self,
+        X: NDArray[Any],
+        y: NDArray[Any],
+        metrics: Optional[Dict[str, Any]] = None,
+    ) -> Dict[str, float]:
+        """Evaluate model performance."""
+        if not self.fitted:
+            raise NotFittedError("Model not trained")
+        return {"mock_metric": 1.0}
+
+
 @pytest.fixture
 def simple_dataset() -> Tuple[NDArray[np.float64], NDArray[np.float64]]:
     """Create a simple dataset for testing.
@@ -34,27 +61,6 @@ def model_class() -> Type[Model]:
     Type[Model]
         Mock model class.
     """
-
-    class MockModel(Model):
-        def train(self, X: NDArray[Any], y: NDArray[Any], **kwargs: Any) -> Model:
-            self.fitted = True
-            return self
-
-        def predict(self, X: NDArray[Any], **kwargs: Any) -> NDArray[Any]:
-            if not self.fitted:
-                raise NotFittedError("Model not trained")
-            return np.zeros(len(X), dtype=np.float64)
-
-        def evaluate(
-            self,
-            X: NDArray[Any],
-            y: NDArray[Any],
-            metrics: Optional[Dict[str, Any]] = None,
-        ) -> Dict[str, float]:
-            if not self.fitted:
-                raise NotFittedError("Model not trained")
-            return {"mock_metric": 1.0}
-
     return MockModel
 
 

@@ -6,7 +6,7 @@ import tempfile
 
 import pytest
 
-from ml_library.logging import configure_logging, get_logger
+from ml_library.logging import configure_logging, get_logger, DEFAULT_FORMAT
 
 
 def test_get_logger():
@@ -122,12 +122,83 @@ def test_logger_setup():
     assert logging.getLogger("test_setup") is logger
 
 
+def test_configure_logging_with_file():
+    """Test logging configuration with a file handler."""
+    with tempfile.NamedTemporaryFile(mode="w+", suffix=".log", delete=False) as tmp:
+        log_file = tmp.name
+
+        # Configure logging with file
+        configure_logging(level="info", log_file=log_file)
+        logger = get_logger("test_file")
+
+        # Log a test message
+        test_message = "Test file logging message"
+        logger.info(test_message)
+
+        # Check that the message was written to the file
+        with open(log_file, "r", encoding="utf-8") as f:
+            content = f.read()
+            assert test_message in content
+
+        # Clean up
+        if os.path.exists(log_file):
+            os.remove(log_file)
+
+
+def test_configure_logging_with_custom_format():
+    """Test logging configuration with a custom format."""
+    custom_format = "%(levelname)s - %(name)s - %(message)s"
+    configure_logging(level="info", format_string=custom_format)
+
+    with tempfile.NamedTemporaryFile(mode="w+", suffix=".log", delete=False) as tmp:
+        # Add a file handler to capture the formatted output
+        handler = logging.FileHandler(tmp.name)
+        formatter = logging.Formatter(custom_format)
+        handler.setFormatter(formatter)
+
+        logger = get_logger("test_format")
+        logger.addHandler(handler)
+
+        # Log a test message
+        test_message = "Test custom format"
+        logger.info(test_message)
+        handler.flush()
+
+        # Check that the message was formatted correctly
+        with open(tmp.name, "r", encoding="utf-8") as f:
+            content = f.read()
+            expected_format = f"INFO - test_format - {test_message}"
+            assert expected_format in content
+
+        # Clean up
+        if os.path.exists(tmp.name):
+            os.remove(tmp.name)
+
+
+def test_invalid_log_level():
+    """Test that an invalid log level raises a ValueError."""
+    with pytest.raises(ValueError):
+        configure_logging(level="invalid_level")
+
+
+def test_capture_warnings():
+    """Test warning capture functionality."""
+    # Just test that the capture_warnings parameter is accepted
+    # We can't easily test if warnings are actually captured in a unit test
+    configure_logging(level="warning", capture_warnings=True)
+    
+    # Generate a warning
+    import warnings
+    with warnings.catch_warnings(record=True) as w:
+        warnings.warn("Test warning message")
+        assert len(w) > 0
+        assert "Test warning message" in str(w[0].message)
+
+
 class TestLogging:
     """Test logging configuration and functionality."""
 
-    def __init__(self):
-        """Initialize test class."""
-        self.log_dir = os.path.join(os.path.dirname(__file__), "logs")
+    log_dir = os.path.join(os.path.dirname(__file__), "logs")
 
     def setup_method(self):
         """Set up test cases."""

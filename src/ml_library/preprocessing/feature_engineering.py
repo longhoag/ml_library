@@ -83,7 +83,7 @@ class PolynomialPreprocessor(Preprocessor):
 class FeatureSelector(Preprocessor):
     """Select top k features based on variance."""
 
-    def __init__(self, k: Optional[int] = None, feature_indices = None) -> None:
+    def __init__(self, k: Optional[int] = None, feature_indices=None) -> None:
         """Initialize FeatureSelector.
 
         Args:
@@ -104,7 +104,7 @@ class FeatureSelector(Preprocessor):
             if k is None or k < 1:
                 raise ValueError("k must be at least 1 when feature_indices is None")
             self.k = k
-            
+
         self._n_features = 0  # Initialize to 0 instead of None
         self.scores_ = None  # Add scores_ attribute
 
@@ -127,7 +127,7 @@ class FeatureSelector(Preprocessor):
                 raise ValueError("Cannot fit with empty array")
 
             self._n_features = X.shape[1]
-            
+
             # If feature_indices were provided in __init__, use those instead of calculating
             if self.feature_indices is not None:
                 # Validate feature indices
@@ -137,7 +137,7 @@ class FeatureSelector(Preprocessor):
                     )
                 self.fitted = True
                 return self
-                
+
             # Otherwise select based on variance
             if self.k > self._n_features:
                 raise ValueError(
@@ -147,7 +147,7 @@ class FeatureSelector(Preprocessor):
             # Calculate variance scores
             variances = np.var(X, axis=0)
             self.scores_ = variances  # Store variance scores
-            self.feature_indices = np.argsort(variances)[-self.k:]
+            self.feature_indices = np.argsort(variances)[-self.k :]
             self.fitted = True
             return self
         except Exception as e:
@@ -195,7 +195,9 @@ class FeatureSelector(Preprocessor):
             PreprocessingError: If not fitted.
         """
         if not self.fitted:
-            raise PreprocessingError("FeatureSelector must be fitted before getting support mask")
+            raise PreprocessingError(
+                "FeatureSelector must be fitted before getting support mask"
+            )
         if self.feature_indices is None:
             raise PreprocessingError("Feature indices not computed")
 
