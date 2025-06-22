@@ -202,10 +202,8 @@ def cross_validate(
         scores["score_time"].append(score_time)
 
     # Convert lists to numpy arrays for consistency with sklearn's cross_validate
-    scores_array = {}
+    scores_array: Dict[str, List[float]] = {}
     for key in scores:
-        scores_array[key] = np.array(scores[key])
+        scores_array[key] = scores[key]
 
     return scores_array
-
-    return scores

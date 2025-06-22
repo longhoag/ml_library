@@ -108,7 +108,8 @@ class LinearModel(Model):
                 "Making predictions with LinearModel on data of shape %s",
                 str(np.shape(X)),
             )
-            return self.model.predict(X)
+            result = self.model.predict(X)
+            return np.asarray(result)
         except Exception as e:
             logger.exception("Error predicting with LinearModel: %s", str(e))
             raise DataError(
@@ -177,7 +178,7 @@ class LinearModel(Model):
                 "Model must be trained before accessing coefficients",
                 model_type="LinearModel",
             )
-        return self.model.coef_
+        return np.asarray(self.model.coef_)
 
     @property
     def intercept_(self) -> Any:
@@ -281,7 +282,8 @@ class LogisticModel(Model):
             )
 
         try:
-            return self.model.predict(X)
+            result = self.model.predict(X)
+            return np.asarray(result)
         except Exception as e:
             logger.exception("Error predicting with LogisticModel: %s", str(e))
             raise DataError(
@@ -317,7 +319,8 @@ class LogisticModel(Model):
             )
 
         try:
-            return self.model.predict_proba(X)
+            result = self.model.predict_proba(X)
+            return np.asarray(result)
         except Exception as e:
             logger.exception(
                 "Error predicting probabilities with LogisticModel: %s", str(e)
@@ -389,7 +392,7 @@ class LogisticModel(Model):
                 "Model must be trained before accessing coefficients",
                 model_type="LogisticModel",
             )
-        return self.model.coef_
+        return np.asarray(self.model.coef_)
 
     @property
     def intercept_(self) -> NDArray[Any]:
@@ -400,7 +403,7 @@ class LogisticModel(Model):
                 "Model must be trained before accessing intercept",
                 model_type="LogisticModel",
             )
-        return self.model.intercept_
+        return np.asarray(self.model.intercept_)
 
     @property
     def classes_(self) -> NDArray[Any]:
@@ -411,4 +414,4 @@ class LogisticModel(Model):
                 "Model must be trained before accessing classes",
                 model_type="LogisticModel",
             )
-        return self.model.classes_
+        return np.asarray(self.model.classes_)

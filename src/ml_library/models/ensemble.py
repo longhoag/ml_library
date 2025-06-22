@@ -87,7 +87,8 @@ class RandomForestModel(Model):
         """
         if not self.fitted:
             raise ValueError("Model must be trained before prediction")
-        return self.model.predict(X)
+        result = self.model.predict(X)
+        return np.asarray(result)
 
     def predict_proba(self, X: NDArray[Any]) -> NDArray[Any]:
         """Predict class probabilities.
@@ -104,7 +105,8 @@ class RandomForestModel(Model):
         """
         if not self.fitted:
             raise ValueError("Model must be trained before prediction")
-        return self.model.predict_proba(X)
+        result = self.model.predict_proba(X)
+        return np.asarray(result)
 
     def evaluate(
         self, X: NDArray[Any], y: NDArray[Any], metrics: Optional[Dict[str, Any]] = None
@@ -193,14 +195,14 @@ class RandomForestModel(Model):
         """Get feature importances."""
         if not self.fitted:
             raise ValueError("Model must be trained first")
-        return self.model.feature_importances_
+        return np.asarray(self.model.feature_importances_)
 
     @property
     def classes_(self) -> NDArray[Any]:
         """Get class labels."""
         if not self.fitted:
             raise ValueError("Model must be trained first")
-        return self.model.classes_
+        return np.asarray(self.model.classes_)
 
 
 class RandomForestRegressorModel(Model):
@@ -269,7 +271,8 @@ class RandomForestRegressorModel(Model):
         """
         if not self.fitted:
             raise ValueError("Model must be trained before prediction")
-        return self.model.predict(X)
+        result = self.model.predict(X)
+        return np.asarray(result)
 
     def evaluate(
         self, X: NDArray[Any], y: NDArray[Any], metrics: Optional[Dict[str, Any]] = None
@@ -313,4 +316,4 @@ class RandomForestRegressorModel(Model):
         """Get feature importances."""
         if not self.fitted:
             raise ValueError("Model must be trained first")
-        return self.model.feature_importances_
+        return np.asarray(self.model.feature_importances_)

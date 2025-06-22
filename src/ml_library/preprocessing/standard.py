@@ -36,8 +36,8 @@ class StandardScaler:
 
     def __init__(self) -> None:
         """Initialize a new StandardScaler."""
-        self.mean_ = None
-        self.scale_ = None
+        self.mean_: Optional[NDArray[Any]] = None
+        self.scale_: Optional[NDArray[Any]] = None
         self.fitted = False
 
     def fit(
@@ -234,11 +234,11 @@ class MinMaxScaler:
             feature_range: Desired range of transformed data.
         """
         self.feature_range = feature_range
-        self.min_ = None
-        self.scale_ = None
-        self.data_min_ = None
-        self.data_max_ = None
-        self.data_range_ = None
+        self.min_: Optional[NDArray[Any]] = None
+        self.scale_: Optional[NDArray[Any]] = None
+        self.data_min_: Optional[NDArray[Any]] = None
+        self.data_max_: Optional[NDArray[Any]] = None
+        self.data_range_: Optional[NDArray[Any]] = None
         self.fitted = False
 
     def fit(self, X: NDArray[Any], y: Optional[NDArray[Any]] = None) -> "MinMaxScaler":
