@@ -3,10 +3,16 @@
 import numpy as np
 from sklearn.linear_model import LinearRegression, LogisticRegression
 from sklearn.metrics import accuracy_score, r2_score
+from sklearn.exceptions import NotFittedError as SklearnNotFittedError
 
+from ml_library.exceptions import DataError, NotFittedError
+from ml_library.logging import get_logger
 from ml_library.models import Model
 
 __all__ = ["LinearModel", "LogisticModel"]
+
+# Setup logger for this module
+logger = get_logger(__name__)
 
 
 class LinearModel(Model):
@@ -38,10 +44,21 @@ class LinearModel(Model):
         -------
         self : LinearModel
             The trained model.
+            
+        Raises
+        ------
+        DataError
+            If there is an issue with the input data.
         """
-        self.model.fit(X, y)
-        self.trained = True
-        return self
+        try:
+            logger.info("Training LinearModel with data of shape %s", str(np.shape(X)))
+            self.model.fit(X, y)
+            self.trained = True
+            logger.debug("LinearModel successfully trained")
+            return self
+        except Exception as e:
+            logger.exception("Error training LinearModel: %s", str(e))
+            raise DataError(f"Error training LinearModel: {str(e)}", data_shape=np.shape(X)) from e
 
     def predict(self, X):
         """Make predictions using the linear regression model.
@@ -55,10 +72,29 @@ class LinearModel(Model):
         -------
         y_pred : array-like of shape (n_samples,)
             Predicted values.
+            
+        Raises
+        ------
+        NotFittedError
+            If the model has not been trained.
+        DataError
+            If there is an issue with the input data.
         """
         if not self.trained:
-            raise ValueError("Model must be trained before prediction")
-        return self.model.predict(X)
+            logger.error("Attempted to predict with untrained LinearModel")
+            raise NotFittedError("Model must be trained before prediction", model_type="LinearModel")
+            
+        try:
+            logger.debug("Making predictions with LinearModel on data of shape %s", str(np.shape(X)))
+            return self.model.predict(X)
+        except SklearnNotFittedError as e:
+            # This shouldn't happen if self.trained is True, but just in case
+            logger.exception("Unexpected NotFittedError in LinearModel predict: %s", str(e))
+            self.trained = False  # Reset the trained flag to match reality
+            raise NotFittedError("Model is not properly fitted", model_type="LinearModel") from e
+        except Exception as e:
+            logger.exception("Error predicting with LinearModel: %s", str(e))
+            raise DataError(f"Error predicting with LinearModel: {str(e)}", data_shape=np.shape(X)) from e
 
     def evaluate(self, X, y):
         """Evaluate the linear regression model.
@@ -74,11 +110,27 @@ class LinearModel(Model):
         -------
         score : float
             R² score.
+            
+        Raises
+        ------
+        NotFittedError
+            If the model has not been trained.
+        DataError
+            If there is an issue with the input data.
         """
         if not self.trained:
-            raise ValueError("Model must be trained before evaluation")
-        y_pred = self.predict(X)
-        return r2_score(y, y_pred)
+            logger.error("Attempted to evaluate untrained LinearModel")
+            raise NotFittedError("Model must be trained before evaluation", model_type="LinearModel")
+            
+        try:
+            logger.debug("Evaluating LinearModel on data of shape %s", str(np.shape(X)))
+            y_pred = self.predict(X)
+            score = r2_score(y, y_pred)
+            logger.info("LinearModel evaluation score: %.4f", score)
+            return score
+        except Exception as e:
+            logger.exception("Error evaluating LinearModel: %s", str(e))
+            raise DataError(f"Error evaluating LinearModel: {str(e)}", data_shape=np.shape(X)) from e
 
     @property
     def coef_(self):

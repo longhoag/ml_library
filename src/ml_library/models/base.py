@@ -3,7 +3,13 @@
 import pickle
 from abc import ABC, abstractmethod
 
+from ml_library.exceptions import NotFittedError
+from ml_library.logging import get_logger
+
 __all__ = ["Model"]
+
+# Setup logger for this module
+logger = get_logger(__name__)
 
 
 class Model(ABC):
@@ -25,6 +31,7 @@ class Model(ABC):
     def __init__(self):
         """Initialize a new model."""
         self.trained = False
+        logger.debug("Initialized %s model", self.__class__.__name__)
 
     @abstractmethod
     def train(self, X, y):
@@ -77,21 +84,37 @@ class Model(ABC):
 
     def save(self, path):
         """Save the model to disk.
-
+        
         Parameters
         ----------
         path : str
             Path to save the model to.
-
+            
         Returns
         -------
         self : Model
             The model instance.
+            
+        Raises
+        ------
+        NotFittedError
+            If the model has not been trained.
+        IOError
+            If there is an issue with file I/O.
         """
         if not self.trained:
-            raise ValueError("Cannot save untrained model")
-        with open(path, "wb") as f:
-            pickle.dump(self, f)
+            logger.error("Attempted to save untrained %s model", self.__class__.__name__)
+            raise NotFittedError("Cannot save untrained model", model_type=self.__class__.__name__)
+        
+        try:
+            logger.info("Saving %s model to %s", self.__class__.__name__, path)
+            with open(path, "wb") as f:
+                pickle.dump(self, f)
+            logger.debug("Successfully saved model to %s", path)
+        except IOError:
+            logger.exception("Failed to save %s model to %s", self.__class__.__name__, path)
+            raise
+            
         return self
 
     @classmethod
@@ -107,7 +130,26 @@ class Model(ABC):
         -------
         model : Model
             The loaded model.
+            
+        Raises
+        ------
+        IOError
+            If there is an issue with file I/O.
+        ValueError
+            If the loaded object is not of the correct type.
         """
-        with open(path, "rb") as f:
-            model = pickle.load(f)
-        return model
+        try:
+            logger.info("Loading model from %s", path)
+            with open(path, "rb") as f:
+                model = pickle.load(f)
+                
+            if not isinstance(model, cls):
+                logger.error("Loaded object is not a %s instance", cls.__name__)
+                raise ValueError(f"Loaded object is not a {cls.__name__} instance")
+                
+            logger.debug("Successfully loaded %s from %s", model.__class__.__name__, path)
+            return model
+            
+        except IOError:
+            logger.exception("Failed to load model from %s", path)
+            raise

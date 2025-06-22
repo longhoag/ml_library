@@ -3,7 +3,13 @@
 import numpy as np
 from sklearn.utils import check_array, check_consistent_length
 
+from ml_library.exceptions import DataError
+from ml_library.logging import get_logger
+
 __all__ = ["check_data", "train_test_split", "cross_validate"]
+
+# Setup logger for this module
+logger = get_logger(__name__)
 
 
 def check_data(X, y=None, ensure_2d=True):
@@ -24,17 +30,39 @@ def check_data(X, y=None, ensure_2d=True):
         Checked data.
     y : array-like, optional
         Checked target values if provided.
+        
+    Raises
+    ------
+    DataError
+        If the data is invalid or inconsistent.
     """
-    # Check X array
-    X = check_array(X, ensure_2d=ensure_2d)
+    try:
+        # Check X array
+        logger.debug("Checking input data with shape: %s", str(np.shape(X)))
+        X = check_array(X, ensure_2d=ensure_2d)
 
-    # If y is provided, check y array and ensure consistent length
-    if y is not None:
-        y = np.asarray(y)
-        check_consistent_length(X, y)
-        return X, y
-
-    return X
+        # If y is provided, check y array and ensure consistent length
+        if y is not None:
+            logger.debug("Checking target data with shape: %s", str(np.shape(y)))
+            y = np.asarray(y)
+            try:
+                check_consistent_length(X, y)
+            except ValueError as e:
+                msg = f"Inconsistent data shapes: X {np.shape(X)}, y {np.shape(y)}"
+                logger.error(msg)
+                raise DataError(msg, data_shape=(np.shape(X), np.shape(y))) from e
+            logger.debug("Data check successful")
+            return X, y
+        
+        logger.debug("Data check successful (X only)")
+        return X
+        
+    except Exception as e:
+        if not isinstance(e, DataError):
+            logger.exception("Data check failed: %s", str(e))
+            raise DataError(f"Invalid data format: {str(e)}", 
+                            data_shape=getattr(X, "shape", None)) from e
+        raise
 
 
 def train_test_split(X, y=None, test_size=0.25, random_state=None, shuffle=True):
