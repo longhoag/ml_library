@@ -12,6 +12,7 @@ This library provides a comprehensive set of tools for machine learning workflow
 - Visualization utilities
 - Integration with popular ML frameworks
 - Extensive documentation and examples
+- Robust logging and error handling
 
 ## Installation
 
@@ -22,23 +23,33 @@ pip install ml-library
 ## Quick Start
 
 ```python
-from ml_library import Model, Preprocessor
+from ml_library import Model, Preprocessor, configure_logging, get_logger
 
-# Prepare data
-preprocessor = Preprocessor()
-X_train_processed = preprocessor.fit_transform(X_train)
-X_test_processed = preprocessor.transform(X_test)
+# Configure logging
+configure_logging(level="info", log_file="ml_library.log")
+logger = get_logger(__name__)
 
-# Train model
-model = Model()
-model.train(X_train_processed, y_train)
+try:
+    # Prepare data
+    preprocessor = Preprocessor()
+    X_train_processed = preprocessor.fit_transform(X_train)
+    X_test_processed = preprocessor.transform(X_test)
 
-# Evaluate
-score = model.evaluate(X_test_processed, y_test)
-print(f"Model accuracy: {score}")
+    # Train model
+    model = Model()
+    model.train(X_train_processed, y_train)
 
-# Save model
-model.save("model.pkl")
+    # Evaluate
+    score = model.evaluate(X_test_processed, y_test)
+    logger.info("Model accuracy: %.4f", score)
+
+    # Save model
+    model.save("model.pkl")
+    logger.info("Model saved to model.pkl")
+    
+except Exception as e:
+    logger.exception("Error in ML workflow: %s", str(e))
+    # Handle the error appropriately
 ```
 
 ## Documentation
@@ -77,6 +88,35 @@ python -m pytest
 
 # Run tests with coverage report
 python -m pytest --cov=ml_library
+```
+
+## Logging and Error Handling
+
+The library includes a robust logging and error handling framework:
+
+```python
+from ml_library import configure_logging, get_logger
+from ml_library.exceptions import DataError
+
+# Configure logging
+configure_logging(level="info", log_file="app.log")
+logger = get_logger(__name__)
+
+try:
+    # Your code here
+    logger.info("Processing data with %d features", n_features)
+    if some_problem:
+        raise DataError("Invalid data format", data_shape=(n_samples, n_features))
+except Exception as e:
+    logger.exception("Error: %s", str(e))
+```
+
+### Key Features
+
+- **Configurable Logging**: Set log level, format, and output destinations
+- **Custom Exceptions**: Hierarchical exception system for clear error reporting
+- **Consistent Interface**: All components use the same logging and error handling patterns
+- **Production Ready**: Designed for use in production environments with proper error recovery
 
 # Run tests with coverage report
 python -m pytest --cov=ml_library
