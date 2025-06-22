@@ -96,7 +96,7 @@ class FeatureSelector(Preprocessor):
             ValueError: If k is less than 1 and feature_indices is None.
         """
         super().__init__()
-        self.feature_indices = None
+        self.feature_indices: Optional[NDArray[Any]] = None
 
         if feature_indices is not None:
             # Convert feature_indices to numpy array if provided
@@ -108,7 +108,7 @@ class FeatureSelector(Preprocessor):
             self.k = k
 
         self._n_features = 0  # Initialize to 0 instead of None
-        self.scores_ = None  # Add scores_ attribute
+        self.scores_: Optional[NDArray[Any]] = None  # Add scores_ attribute
 
     def fit(self, X: NDArray[Any], y: Optional[NDArray[Any]] = None) -> Self:
         """Calculate feature variances and select top k.
@@ -152,7 +152,9 @@ class FeatureSelector(Preprocessor):
             # Calculate variance scores
             variances = np.var(X, axis=0)
             self.scores_ = variances  # Store variance scores
-            self.feature_indices = np.argsort(variances)[-self.k :]
+            # Initialize feature_indices properly before assignment
+            if self.feature_indices is None:  # Only set if not already initialized
+                self.feature_indices = np.argsort(variances)[-self.k :]
             self.fitted = True
             return self
         except Exception as e:
