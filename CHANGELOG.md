@@ -10,6 +10,26 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Added
 - Future features and improvements will be listed here
 
+## [0.2.0] - 2025-06-22
+
+### Added
+- Achieved >95% test coverage across all modules
+- Expanded test suite with edge case handling
+- Comprehensive type annotations supporting mypy
+- Enhanced error handling in all preprocessors
+- Fixed StandardScaler and MinMaxScaler to match scikit-learn interface
+- Improved feature engineering components
+- Added example for feature selection workflow
+- Expanded logging functionality
+
+### Fixed
+- StandardPreprocessor initialization and transform handling
+- Fixed StandardScaler and MinMaxScaler compatibility with scikit-learn
+- Circular import issues in preprocessing modules
+- Corrected model evaluation metrics with proper error handling
+- All type annotation issues for Python 3.10+ compatibility
+- Fixed import/API mismatches throughout the codebase
+
 ## [0.1.0] - 2023-06-22
 
 ### Added

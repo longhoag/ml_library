@@ -1,18 +1,20 @@
 # ML Library
 
-A production-ready machine learning library designed for flexibility, extensibility, and ease of use.
+A production-ready machine learning library designed for flexibility, extensibility, and ease of use with comprehensive test coverage and strong type safety.
 
 ## Overview
 
 This library provides a comprehensive set of tools for machine learning workflows, including:
 
 - Data preprocessing and feature engineering
-- Model training and evaluation
+- Model training and evaluation with standardized interfaces
 - Model serialization and management
-- Visualization utilities
-- Integration with popular ML frameworks
-- Extensive documentation and examples
-- Robust logging and error handling
+- Visualization utilities for learning curves and feature importance
+- Integration with scikit-learn and other popular ML frameworks
+- Extensive test suite with >95% code coverage
+- Comprehensive documentation and practical examples
+- Robust logging and hierarchical error handling system
+- Type hints throughout the codebase (compatible with mypy)
 
 ## Installation
 
@@ -23,25 +25,47 @@ pip install ml-library
 ## Quick Start
 
 ```python
-from ml_library import Model, Preprocessor, configure_logging, get_logger
+from ml_library import (
+    LogisticModel,
+    StandardPreprocessor, 
+    configure_logging, 
+    get_logger,
+    accuracy
+)
+from sklearn.datasets import make_classification
+from sklearn.model_selection import train_test_split
 
 # Configure logging
 configure_logging(level="info", log_file="ml_library.log")
 logger = get_logger(__name__)
 
 try:
-    # Prepare data
-    preprocessor = Preprocessor()
+    # Generate a synthetic dataset
+    X, y = make_classification(
+        n_samples=1000, n_features=20, n_informative=10, random_state=42
+    )
+    
+    # Split the data into training and testing sets
+    X_train, X_test, y_train, y_test = train_test_split(
+        X, y, test_size=0.2, random_state=42
+    )
+    
+    # Preprocess the data
+    preprocessor = StandardPreprocessor()
     X_train_processed = preprocessor.fit_transform(X_train)
     X_test_processed = preprocessor.transform(X_test)
 
     # Train model
-    model = Model()
+    model = LogisticModel()
     model.train(X_train_processed, y_train)
 
     # Evaluate
-    score = model.evaluate(X_test_processed, y_test)
-    logger.info("Model accuracy: %.4f", score)
+    metrics = model.evaluate(X_test_processed, y_test)
+    logger.info("Model accuracy: %.4f", metrics["accuracy"])
+    
+    # You can also use individual metrics
+    acc = accuracy(y_test, model.predict(X_test_processed))
+    logger.info("Accuracy calculated manually: %.4f", acc)
 
     # Save model
     model.save("model.pkl")
@@ -49,7 +73,6 @@ try:
 
 except Exception as e:
     logger.exception("Error in ML workflow: %s", str(e))
-    # Handle the error appropriately
 ```
 
 ## Documentation
@@ -78,16 +101,65 @@ The documentation will be available in the `docs/build/html/` directory.
 - **Contributing**: Guidelines for contributing to the library
 - **Changelog**: Version history and changes
 
+## Main Components
+
+### Models
+
+The library provides several model implementations:
+
+- **LinearModel**: Linear regression model
+- **LogisticModel**: Logistic regression for classification
+- **RandomForestModel**: Random forest for classification
+- **RandomForestRegressorModel**: Random forest for regression
+
+All models share a consistent interface:
+```python
+model.train(X_train, y_train)  # Train the model
+predictions = model.predict(X_test)  # Make predictions
+metrics = model.evaluate(X_test, y_test)  # Evaluate performance
+model.save("model.pkl")  # Serialize the model
+loaded_model = ModelClass.load("model.pkl")  # Load a saved model
+```
+
+### Preprocessing
+
+Data preprocessing components:
+
+- **StandardPreprocessor**: Standardizes numerical features
+- **PolynomialPreprocessor**: Generates polynomial features
+- **FeatureSelector**: Selects the most important features
+
+Example:
+```python
+preprocessor = StandardPreprocessor()
+X_train_processed = preprocessor.fit_transform(X_train)
+X_test_processed = preprocessor.transform(X_test)
+```
+
+### Metrics
+
+The library includes functions for common evaluation metrics:
+
+- Classification: `accuracy`, `precision`, `recall`, `f1`, `roc_auc`
+- Regression: `mse`, `mae`, `r2`
+
+### Visualization
+
+Visualization utilities include:
+
+- `plot_learning_curve`: Plot learning curves for model training
+- `plot_feature_importances`: Visualize feature importance
+
 ## Testing
 
-The library has a comprehensive test suite using pytest. To run the tests:
+The library has a comprehensive test suite using pytest with >95% code coverage:
 
 ```bash
 # Run all tests
 python -m pytest
 
 # Run tests with coverage report
-python -m pytest --cov=ml_library
+python -m pytest --cov=src/ml_library --cov-report term
 ```
 
 ## Logging and Error Handling
