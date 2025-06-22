@@ -1,16 +1,17 @@
 """Tests for the preprocessing module."""
+
 import numpy as np
 import pytest
 
+from ml_library.exceptions import PreprocessingError
 from ml_library.preprocessing import (
     FeatureSelector,
+    MinMaxScaler,
     PolynomialPreprocessor,
     Preprocessor,
     StandardPreprocessor,
     StandardScaler,
-    MinMaxScaler,
 )
-from ml_library.exceptions import PreprocessingError
 
 
 class TestBasePreprocessor:
@@ -98,26 +99,25 @@ class TestStandardPreprocessor:
         categorical_features = [2]
         preprocessor = StandardPreprocessor(
             numerical_features=numerical_features,
-            categorical_features=categorical_features
+            categorical_features=categorical_features,
         )
-        
+
         # Test initialization
         assert preprocessor.numerical_features == numerical_features
         assert preprocessor.categorical_features == categorical_features
         assert preprocessor.scaler is not None
         assert preprocessor.transformer is not None
-        
+
         # Create a dataset with mixed data types
-        X = np.array([[1.0, 2.0, 0], 
-                     [3.0, 4.0, 1], 
-                     [5.0, 6.0, 0], 
-                     [7.0, 8.0, 1]], dtype=float)
+        X = np.array(
+            [[1.0, 2.0, 0], [3.0, 4.0, 1], [5.0, 6.0, 0], [7.0, 8.0, 1]], dtype=float
+        )
         y = np.array([0, 1, 0, 1])
-        
+
         # Test fitting
         preprocessor.fit(X, y)
         assert preprocessor.fitted
-        
+
         # Test transformation
         transformed = preprocessor.transform(X)
         # Should have one-hot encoded categorical feature (2 columns) plus 2 numerical features
@@ -295,12 +295,12 @@ class TestStandardScaler:
         """Test that transform raises error if fitted but attributes are None."""
         scaler = StandardScaler()
         X = np.array([[1, 2], [3, 4]], dtype=np.float64)
-        
+
         # Manually set fitted but leave attributes as None
         scaler.fitted = True
         assert scaler.mean_ is None
         assert scaler.scale_ is None
-        
+
         with pytest.raises(PreprocessingError, match="not properly fitted"):
             scaler.transform(X)
 
@@ -409,11 +409,11 @@ class TestMinMaxScaler:
         """Test that transform raises error if fitted but attributes are None."""
         scaler = MinMaxScaler()
         X = np.array([[1, 2], [3, 4]], dtype=np.float64)
-        
+
         # Manually set fitted but leave attributes as None
         scaler.fitted = True
         assert scaler.scale_ is None
         assert scaler.min_ is None
-        
+
         with pytest.raises(PreprocessingError, match="not properly fitted"):
             scaler.transform(X)

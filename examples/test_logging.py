@@ -1,6 +1,7 @@
 """Utility script to test logging configuration."""
 
 import argparse
+
 import numpy as np
 
 from ml_library.exceptions import (

@@ -1,8 +1,9 @@
 """Test visualization functions."""
 import os
 import unittest
+from unittest.mock import Mock, patch
+
 import numpy as np
-from unittest.mock import patch, Mock
 from sklearn.linear_model import LinearRegression
 
 from ml_library.visualization import plot_learning_curve, plot_learning_curves
@@ -39,24 +40,28 @@ class TestVisualization(unittest.TestCase):
         )
         self.y = np.array([2, 4, 6, 8, 10, 12, 14, 16, 18, 20])
         self.model = LinearRegression()
-        
-    @patch('ml_library.visualization.learning_curve')
+
+    @patch("ml_library.visualization.learning_curve")
     def test_plot_learning_curve(self, mock_learning_curve) -> None:
         """Test plotting of scikit-learn learning curve.
-        
+
         Verifies that learning curve can be plotted for a model.
         """
         # Mock the learning_curve function
         train_sizes = np.linspace(0.1, 1.0, 5)
-        train_scores = np.array([[0.6, 0.65], [0.7, 0.75], [0.8, 0.85], [0.9, 0.95], [0.95, 0.98]])
-        test_scores = np.array([[0.55, 0.6], [0.65, 0.7], [0.75, 0.8], [0.85, 0.9], [0.9, 0.92]])
-        
+        train_scores = np.array(
+            [[0.6, 0.65], [0.7, 0.75], [0.8, 0.85], [0.9, 0.95], [0.95, 0.98]]
+        )
+        test_scores = np.array(
+            [[0.55, 0.6], [0.65, 0.7], [0.75, 0.8], [0.85, 0.9], [0.9, 0.92]]
+        )
+
         # Configure mock to return our predefined values
         mock_learning_curve.return_value = (train_sizes, train_scores, test_scores)
-        
+
         # Call the function
         fig = plot_learning_curve(self.model, self.X, self.y, cv=2)
-        
+
         # Verify results
         self.assertIsNotNone(fig)
         # Assert that learning_curve was called

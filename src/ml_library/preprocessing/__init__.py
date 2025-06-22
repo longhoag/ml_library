@@ -6,9 +6,9 @@ from ml_library.preprocessing.feature_engineering import (
     PolynomialPreprocessor,
 )
 from ml_library.preprocessing.standard import (
+    MinMaxScaler,
     StandardPreprocessor,
     StandardScaler,
-    MinMaxScaler,
 )
 
 __all__ = [

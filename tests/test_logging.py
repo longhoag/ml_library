@@ -6,7 +6,7 @@ import tempfile
 
 import pytest
 
-from ml_library.logging import configure_logging, get_logger, DEFAULT_FORMAT
+from ml_library.logging import DEFAULT_FORMAT, configure_logging, get_logger
 
 
 def test_get_logger():
@@ -186,9 +186,10 @@ def test_capture_warnings():
     # Just test that the capture_warnings parameter is accepted
     # We can't easily test if warnings are actually captured in a unit test
     configure_logging(level="warning", capture_warnings=True)
-    
+
     # Generate a warning
     import warnings
+
     with warnings.catch_warnings(record=True) as w:
         warnings.warn("Test warning message")
         assert len(w) > 0
