@@ -2,7 +2,7 @@
 import numpy as np
 import pytest
 
-from ml_library.metrics import accuracy, precision, recall, f1, roc_auc, mse, mae, r2
+from ml_library.metrics import accuracy, f1, mae, mse, precision, r2, recall, roc_auc
 
 
 class TestClassificationMetrics:

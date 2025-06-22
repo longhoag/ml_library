@@ -39,3 +39,17 @@ disallow_incomplete_defs = false
 testpaths = ["tests"]
 python_files = "test_*.py"
 python_functions = "test_*"
+addopts = "--cov=ml_library --cov-report=term-missing --cov-report=xml"
+
+[tool.coverage.run]
+source = ["ml_library"]
+omit = ["*/tests/*", "*/migrations/*", "*/examples/*"]
+
+[tool.coverage.report]
+exclude_lines = [
+    "pragma: no cover",
+    "def __repr__",
+    "raise NotImplementedError",
+    "if __name__ == .__main__.:",
+    "pass",
+]

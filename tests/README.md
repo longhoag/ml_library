@@ -45,7 +45,7 @@ The project uses GitHub Actions for continuous integration. The workflow is defi
 
 ## Test Coverage
 
-The current test coverage is approximately 82%. 
+The current test coverage is approximately 82%.
 
 ## Known Issues
 
