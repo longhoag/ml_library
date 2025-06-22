@@ -2,10 +2,50 @@
 
 __version__ = "0.1.0"
 
+from ml_library.metrics import accuracy, f1, mae, mse, precision, r2, recall, roc_auc
+
 # Import key components for easier access
-from ml_library.models import Model
-from ml_library.preprocessing import Preprocessor
-from ml_library.utils import check_data
+from ml_library.models import (
+    LinearModel,
+    LogisticModel,
+    Model,
+    RandomForestModel,
+    RandomForestRegressorModel,
+)
+from ml_library.preprocessing import (
+    FeatureSelector,
+    PolynomialPreprocessor,
+    Preprocessor,
+    StandardPreprocessor,
+)
+from ml_library.utils import check_data, cross_validate, train_test_split
 from ml_library.visualization import plot_learning_curve
 
-__all__ = ["Model", "Preprocessor", "check_data", "plot_learning_curve"]
+__all__ = [
+    # Models
+    "Model",
+    "LinearModel",
+    "LogisticModel",
+    "RandomForestModel",
+    "RandomForestRegressorModel",
+    # Preprocessing
+    "Preprocessor",
+    "StandardPreprocessor",
+    "PolynomialPreprocessor",
+    "FeatureSelector",
+    # Utils
+    "check_data",
+    "train_test_split",
+    "cross_validate",
+    # Visualization
+    "plot_learning_curve",
+    # Metrics
+    "accuracy",
+    "precision",
+    "recall",
+    "f1",
+    "roc_auc",
+    "mse",
+    "mae",
+    "r2",
+]

@@ -2,7 +2,13 @@
 
 import joblib
 
-__all__ = ["Model"]
+__all__ = [
+    "Model",
+    "LinearModel",
+    "LogisticModel",
+    "RandomForestModel",
+    "RandomForestRegressorModel",
+]
 
 
 class Model:
@@ -97,3 +103,9 @@ class Model:
             The loaded model.
         """
         return joblib.load(filepath)
+
+
+from ml_library.models.ensemble import RandomForestModel, RandomForestRegressorModel
+
+# Import specific model implementations
+from ml_library.models.linear import LinearModel, LogisticModel

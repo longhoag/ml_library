@@ -1,6 +1,11 @@
 """Data preprocessing utilities."""
 
-__all__ = ["Preprocessor"]
+__all__ = [
+    "Preprocessor",
+    "StandardPreprocessor",
+    "PolynomialPreprocessor",
+    "FeatureSelector",
+]
 
 
 class Preprocessor:
@@ -61,3 +66,12 @@ class Preprocessor:
             Transformed data.
         """
         return self.fit(X, y).transform(X)
+
+
+from ml_library.preprocessing.feature_engineering import (
+    FeatureSelector,
+    PolynomialPreprocessor,
+)
+
+# Import specific preprocessors
+from ml_library.preprocessing.standard import StandardPreprocessor
