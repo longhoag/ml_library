@@ -11,6 +11,7 @@ This library provides a comprehensive set of tools for machine learning workflow
 - Model serialization and management
 - Visualization utilities
 - Integration with popular ML frameworks
+- Extensive documentation and examples
 
 ## Installation
 
@@ -40,6 +41,21 @@ print(f"Model accuracy: {score}")
 model.save("model.pkl")
 ```
 
+## Documentation
+
+The library comes with comprehensive documentation built with Sphinx. To build and view the documentation:
+
+```bash
+# Build the documentation
+./build_docs.sh
+
+# Alternatively, build manually
+cd docs
+make html
+```
+
+The documentation will be available in the `docs/build/html/` directory.
+
 ## Testing
 
 The library has a comprehensive test suite using pytest. To run the tests:
@@ -47,6 +63,9 @@ The library has a comprehensive test suite using pytest. To run the tests:
 ```bash
 # Run all tests
 python -m pytest
+
+# Run tests with coverage report
+python -m pytest --cov=ml_library
 
 # Run tests with coverage report
 python -m pytest --cov=ml_library
