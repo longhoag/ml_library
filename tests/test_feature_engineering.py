@@ -10,7 +10,7 @@ from ml_library.preprocessing.feature_engineering import (
 )
 
 
-def test_feature_selector_properties():
+def test_feature_selector_properties() -> None:
     """Test the properties of FeatureSelector."""
     # Create dummy data
     X = np.array([[1, 2, 3], [4, 5, 6], [7, 8, 9], [10, 11, 12]])
@@ -42,7 +42,7 @@ def test_feature_selector_properties():
     assert selector_manual.scores_ is None
 
 
-def test_polynomial_preprocessor_edge_cases():
+def test_polynomial_preprocessor_edge_cases() -> None:
     """Test edge cases in PolynomialPreprocessor."""
     # Test with interaction_only
     X = np.array([[1, 2], [3, 4]])

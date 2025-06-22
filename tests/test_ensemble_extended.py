@@ -8,7 +8,7 @@ from ml_library.models import RandomForestModel, RandomForestRegressorModel
 
 
 @pytest.fixture
-def classification_data():
+def classification_data() -> tuple[np.ndarray, np.ndarray, np.ndarray, np.ndarray]:
     """Generate sample classification data."""
     X, y = make_classification(
         n_samples=100, n_features=5, n_informative=3, n_redundant=1, random_state=42
@@ -19,7 +19,7 @@ def classification_data():
 
 
 @pytest.fixture
-def regression_data():
+def regression_data() -> tuple[np.ndarray, np.ndarray, np.ndarray, np.ndarray]:
     """Generate sample regression data."""
     # make_regression can return coef as a third value which we don't need
     X, y, _ = make_regression(
@@ -33,31 +33,31 @@ def regression_data():
 class TestRandomForestErrors:
     """Test error handling in RandomForestModel."""
 
-    def test_predict_not_trained(self):
+    def test_predict_not_trained(self) -> None:
         """Test predict raises error when model is not trained."""
         model = RandomForestModel()
         with pytest.raises(ValueError):
             model.predict(np.array([[1, 2], [3, 4]]))
 
-    def test_predict_proba_not_trained(self):
+    def test_predict_proba_not_trained(self) -> None:
         """Test predict_proba raises error when model is not trained."""
         model = RandomForestModel()
         with pytest.raises(ValueError):
             model.predict_proba(np.array([[1, 2], [3, 4]]))
 
-    def test_evaluate_not_trained(self):
+    def test_evaluate_not_trained(self) -> None:
         """Test evaluate raises error when model is not trained."""
         model = RandomForestModel()
         with pytest.raises(ValueError):
             model.evaluate(np.array([[1, 2], [3, 4]]), np.array([0, 1]))
 
-    def test_feature_importances_not_trained(self):
+    def test_feature_importances_not_trained(self) -> None:
         """Test feature_importances_ raises error when model is not trained."""
         model = RandomForestModel()
         with pytest.raises(ValueError):
             _ = model.feature_importances_
 
-    def test_classes_not_trained(self):
+    def test_classes_not_trained(self) -> None:
         """Test classes_ raises error when model is not trained."""
         model = RandomForestModel()
         with pytest.raises(ValueError):
@@ -67,26 +67,26 @@ class TestRandomForestErrors:
 class TestRandomForestRegressorErrors:
     """Test error handling in RandomForestRegressorModel."""
 
-    def test_predict_not_trained(self):
+    def test_predict_not_trained(self) -> None:
         """Test predict raises error when model is not trained."""
         model = RandomForestRegressorModel()
         with pytest.raises(ValueError):
             model.predict(np.array([[1, 2], [3, 4]]))
 
-    def test_evaluate_not_trained(self):
+    def test_evaluate_not_trained(self) -> None:
         """Test evaluate raises error when model is not trained."""
         model = RandomForestRegressorModel()
         with pytest.raises(ValueError):
             model.evaluate(np.array([[1, 2], [3, 4]]), np.array([1.0, 2.0]))
 
-    def test_feature_importances_not_trained(self):
+    def test_feature_importances_not_trained(self) -> None:
         """Test feature_importances_ raises error when model is not trained."""
         model = RandomForestRegressorModel()
         with pytest.raises(ValueError):
             _ = model.feature_importances_
 
 
-def test_random_forest_multiclass(classification_data):
+def test_random_forest_multiclass(classification_data) -> None:
     """Test RandomForestModel with multiclass data."""
     # Rename local variable to avoid name shadowing with the fixture
     test_data = classification_data
@@ -126,7 +126,7 @@ def test_random_forest_multiclass(classification_data):
     )
 
 
-def test_random_forest_parameter_variations():
+def test_random_forest_parameter_variations() -> None:
     """Test RandomForestModel with different parameter values."""
     X = np.array([[1, 2], [3, 4], [5, 6], [7, 8], [9, 10]])
     y = np.array([0, 1, 0, 1, 0])
@@ -158,7 +158,7 @@ def test_random_forest_parameter_variations():
     assert model5.random_state == 42
 
 
-def test_random_forest_regressor_parameter_variations():
+def test_random_forest_regressor_parameter_variations() -> None:
     """Test RandomForestRegressorModel with different parameter values."""
     X = np.array([[1, 2], [3, 4], [5, 6], [7, 8], [9, 10]])
     y = np.array([2.5, 4.5, 6.5, 8.5, 10.5])

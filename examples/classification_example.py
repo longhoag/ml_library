@@ -18,7 +18,7 @@ from ml_library import (
 )
 
 
-def main():
+def main() -> None:
     """Run a complete example using breast cancer dataset."""
     # Load the dataset
     # The IDE may show errors for sklearn Bunch attrs but code runs fine

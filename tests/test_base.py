@@ -3,13 +3,13 @@
 from ml_library import Preprocessor
 
 
-def test_preprocessor_init():
+def test_preprocessor_init() -> None:
     """Test that preprocessor initializes correctly."""
     preprocessor = Preprocessor()
     assert preprocessor.fitted is False
 
 
-def test_preprocessor_fit():
+def test_preprocessor_fit() -> None:
     """Test that preprocessor fit method works."""
     import numpy as np
 
@@ -23,7 +23,7 @@ def test_preprocessor_fit():
     assert result is preprocessor
 
 
-def test_model_init():
+def test_model_init() -> None:
     """Test that model initializes correctly."""
     # Model is abstract base class, can't be instantiated directly
     # So we use a concrete subclass or patching for testing
@@ -33,7 +33,7 @@ def test_model_init():
     assert model.fitted is False
 
 
-def test_model_train():
+def test_model_train() -> None:
     """Test that model train method works."""
     # Model is abstract base class, can't be instantiated directly
     # So we use a concrete subclass for testing

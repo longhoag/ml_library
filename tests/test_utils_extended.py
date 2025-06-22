@@ -16,23 +16,23 @@ class SimpleMockModel(BaseEstimator):
         self.train_count = 0
         self.eval_count = 0
 
-    def fit(self, X, y):
+    def fit(self, X: np.ndarray, y: np.ndarray) -> 'SimpleMockModel':
         """Mock fit method."""
         self.fitted = True
         self.train_count += 1
         return self
 
-    def predict(self, X):
+    def predict(self, X: np.ndarray) -> np.ndarray:
         """Mock predict method."""
         return np.zeros(len(X))
 
-    def score(self, X, y):
+    def score(self, X: np.ndarray, y: np.ndarray) -> float:
         """Mock score method."""
         self.eval_count += 1
         return 0.8  # Fixed score for testing
 
 
-def test_check_data_corner_cases():
+def test_check_data_corner_cases() -> None:
     """Test check_data with various edge cases."""
     # Test with 1D array
     X = np.array([1, 2, 3, 4])
@@ -62,7 +62,7 @@ def test_check_data_corner_cases():
         check_data(X_with_inf)
 
 
-def test_cross_validate_edge_cases():
+def test_cross_validate_edge_cases() -> None:
     """Test cross_validate with edge cases."""
     # Test with small dataset
     X = np.array([[1, 2], [3, 4]])

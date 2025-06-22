@@ -9,7 +9,7 @@ import pytest
 from ml_library.logging import configure_logging, get_logger
 
 
-def test_get_logger():
+def test_get_logger() -> None:
     """Test getting a logger instance."""
     # Test getting a logger with specific name
     logger = get_logger("ml_library")
@@ -25,7 +25,7 @@ def test_get_logger():
     assert logger != custom_logger
 
 
-def test_configure_logging():
+def test_configure_logging() -> None:
     """Test setting up logging with various configurations."""
     # Test with default config
     configure_logging()  # This should not raise any exceptions
@@ -53,7 +53,7 @@ def test_configure_logging():
         logging.CRITICAL,
     ],
 )
-def test_log_levels(log_level):
+def test_log_levels(log_level: int) -> None:
     """Test logging at different levels."""
     configure_logging(level=log_level)
     logger = get_logger("test_levels")
@@ -108,7 +108,7 @@ def test_log_levels(log_level):
         os.remove(tmp.name)
 
 
-def test_logger_setup():
+def test_logger_setup() -> None:
     """Test basic logger setup and usage."""
     # Create a logger
     logger = get_logger("test_setup")
@@ -122,7 +122,7 @@ def test_logger_setup():
     assert logging.getLogger("test_setup") is logger
 
 
-def test_configure_logging_with_file():
+def test_configure_logging_with_file() -> None:
     """Test logging configuration with a file handler."""
     with tempfile.NamedTemporaryFile(mode="w+", suffix=".log", delete=False) as tmp:
         log_file = tmp.name
@@ -145,7 +145,7 @@ def test_configure_logging_with_file():
             os.remove(log_file)
 
 
-def test_configure_logging_with_custom_format():
+def test_configure_logging_with_custom_format() -> None:
     """Test logging configuration with a custom format."""
     custom_format = "%(levelname)s - %(name)s - %(message)s"
     configure_logging(level="info", format_string=custom_format)
@@ -175,13 +175,13 @@ def test_configure_logging_with_custom_format():
             os.remove(tmp.name)
 
 
-def test_invalid_log_level():
+def test_invalid_log_level() -> None:
     """Test that an invalid log level raises a ValueError."""
     with pytest.raises(ValueError):
         configure_logging(level="invalid_level")
 
 
-def test_capture_warnings():
+def test_capture_warnings() -> None:
     """Test warning capture functionality."""
     # Just test that the capture_warnings parameter is accepted
     # We can't easily test if warnings are actually captured in a unit test
@@ -201,12 +201,12 @@ class TestLogging:
 
     log_dir = os.path.join(os.path.dirname(__file__), "logs")
 
-    def setup_method(self):
+    def setup_method(self) -> None:
         """Set up test cases."""
         if not os.path.exists(self.log_dir):
             os.makedirs(self.log_dir)
 
-    def test_setup_logging(self):
+    def test_setup_logging(self) -> None:
         """Test logging setup configuration."""
         # Configure logging
         log_file = os.path.join(self.log_dir, "test.log")

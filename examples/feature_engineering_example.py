@@ -16,7 +16,7 @@ from ml_library import (
 )
 
 
-def main():
+def main() -> None:
     """Run feature engineering example."""
     # Generate synthetic regression data with only 5 informative features
     X, y, _ = make_regression(

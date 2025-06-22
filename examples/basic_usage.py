@@ -7,7 +7,7 @@ from sklearn.model_selection import train_test_split
 from ml_library import Model, Preprocessor
 
 
-def main():
+def main() -> None:
     """Run a simple example of the ML library."""
     # Generate a synthetic dataset
     X, y = make_classification(

@@ -10,7 +10,7 @@ from ml_library.models import LinearModel, LogisticModel
 
 
 @pytest.fixture
-def regression_data():
+def regression_data() -> tuple[np.ndarray, np.ndarray, np.ndarray, np.ndarray]:
     """Generate sample regression data."""
     # make_regression can return coef as a third value which we don't need
     X, y, _ = make_regression(
@@ -26,7 +26,7 @@ def regression_data():
 
 
 @pytest.fixture
-def classification_data():
+def classification_data() -> tuple[np.ndarray, np.ndarray, np.ndarray, np.ndarray]:
     """Generate sample classification data."""
     X, y = make_classification(
         n_samples=100,
@@ -43,20 +43,20 @@ def classification_data():
 class TestLinearModelErrors:
     """Test error handling in LinearModel."""
 
-    def test_train_data_error(self):
+    def test_train_data_error(self) -> None:
         """Test that train raises DataError for invalid input."""
         model = LinearModel()
         with pytest.raises(DataError):
             # Invalid data (different dimensions)
             model.train(np.array([[1, 2], [3, 4]]), np.array([1, 2, 3]))
 
-    def test_predict_not_fitted(self):
+    def test_predict_not_fitted(self) -> None:
         """Test that predict raises NotFittedError if model not trained."""
         model = LinearModel()
         with pytest.raises(NotFittedError):
             model.predict(np.array([[1, 2], [3, 4]]))
 
-    def test_predict_data_error(self):
+    def test_predict_data_error(self) -> None:
         """Test that predict raises DataError for invalid input."""
         model = LinearModel()
         X_train = np.array([[1, 2], [3, 4], [5, 6]])
@@ -67,13 +67,13 @@ class TestLinearModelErrors:
             # Wrong number of features
             model.predict(np.array([[1, 2, 3], [4, 5, 6]]))
 
-    def test_evaluate_not_fitted(self):
+    def test_evaluate_not_fitted(self) -> None:
         """Test that evaluate raises NotFittedError if model not trained."""
         model = LinearModel()
         with pytest.raises(NotFittedError):
             model.evaluate(np.array([[1, 2], [3, 4]]), np.array([1, 2]))
 
-    def test_evaluate_data_error(self):
+    def test_evaluate_data_error(self) -> None:
         """Test that evaluate raises DataError for invalid input."""
         model = LinearModel()
         X_train = np.array([[1, 2], [3, 4], [5, 6]])
@@ -84,7 +84,7 @@ class TestLinearModelErrors:
             # Wrong number of features
             model.evaluate(np.array([[1, 2, 3], [4, 5, 6]]), np.array([1, 2]))
 
-    def test_property_access_not_fitted(self):
+    def test_property_access_not_fitted(self) -> None:
         """Test that accessing properties raises NotFittedError if model not trained."""
         model = LinearModel()
 
@@ -98,7 +98,7 @@ class TestLinearModelErrors:
 class TestLogisticModelErrors:
     """Test error handling in LogisticModel."""
 
-    def test_predict_data_error(self):
+    def test_predict_data_error(self) -> None:
         """Test that predict handles invalid input."""
         model = LogisticModel()
 
@@ -112,28 +112,28 @@ class TestLogisticModelErrors:
             # Wrong number of features should raise an error
             model.predict(np.array([[1, 2, 3], [4, 5, 6]]))
 
-    def test_predict_not_fitted(self):
+    def test_predict_not_fitted(self) -> None:
         """Test that predict raises error if model not trained."""
         model = LogisticModel()
 
         with pytest.raises(NotFittedError):
             model.predict(np.array([[1, 2], [3, 4]]))
 
-    def test_predict_proba_not_fitted(self):
+    def test_predict_proba_not_fitted(self) -> None:
         """Test that predict_proba raises error if model not trained."""
         model = LogisticModel()
 
         with pytest.raises(NotFittedError):
             model.predict_proba(np.array([[1, 2], [3, 4]]))
 
-    def test_evaluate_not_fitted(self):
+    def test_evaluate_not_fitted(self) -> None:
         """Test that evaluate raises error if model not trained."""
         model = LogisticModel()
 
         with pytest.raises(NotFittedError):
             model.evaluate(np.array([[1, 2], [3, 4]]), np.array([0, 1]))
 
-    def test_property_access_not_fitted(self):
+    def test_property_access_not_fitted(self) -> None:
         """Test that accessing properties raises NotFittedError if model not trained."""
         model = LogisticModel()
 
@@ -147,7 +147,7 @@ class TestLogisticModelErrors:
             _ = model.classes_
 
 
-def test_logistic_model_multiclass(classification_data):
+def test_logistic_model_multiclass(classification_data) -> None:
     """Test LogisticModel with multiclass data."""
     # Rename local variable to avoid name shadowing with the fixture
     test_data = classification_data

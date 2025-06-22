@@ -1,5 +1,7 @@
 """Additional tests for feature engineering module to improve coverage."""
 
+from typing import Optional
+
 import numpy as np
 import pytest
 
@@ -13,7 +15,7 @@ from ml_library.preprocessing.feature_engineering import (
 class TestFeatureSelectorEdgeCases:
     """Tests for FeatureSelector edge cases."""
 
-    def test_empty_input(self):
+    def test_empty_input(self) -> None:
         """Test handling of empty input."""
         selector = FeatureSelector(k=2)
 
@@ -22,7 +24,7 @@ class TestFeatureSelectorEdgeCases:
         with pytest.raises(ValueError):
             selector.fit(X_empty)
 
-    def test_k_greater_than_features(self):
+    def test_k_greater_than_features(self) -> None:
         """Test when k is greater than number of features."""
         X = np.array([[1, 2, 3], [4, 5, 6]])
 
@@ -31,7 +33,7 @@ class TestFeatureSelectorEdgeCases:
         with pytest.raises(ValueError):
             selector.fit(X)
 
-    def test_invalid_feature_indices(self):
+    def test_invalid_feature_indices(self) -> None:
         """Test with invalid feature indices."""
         X = np.array([[1, 2, 3], [4, 5, 6]])
 
@@ -40,14 +42,14 @@ class TestFeatureSelectorEdgeCases:
         with pytest.raises(ValueError):
             selector.fit(X)
 
-    def test_get_support_not_fitted(self):
+    def test_get_support_not_fitted(self) -> None:
         """Test get_support property when not fitted."""
         selector = FeatureSelector(k=2)
 
         with pytest.raises(PreprocessingError):
             _ = selector.get_support
 
-    def test_transform_shape_mismatch(self):
+    def test_transform_shape_mismatch(self) -> None:
         """Test transform with shape mismatch."""
         X = np.array([[1, 2, 3], [4, 5, 6]])
         selector = FeatureSelector(k=2)
@@ -58,7 +60,7 @@ class TestFeatureSelectorEdgeCases:
         with pytest.raises(ValueError):
             selector.transform(X_wrong)
 
-    def test_transform_not_fitted(self):
+    def test_transform_not_fitted(self) -> None:
         """Test transform without fitting first."""
         X = np.array([[1, 2, 3], [4, 5, 6]])
         selector = FeatureSelector(k=2)
@@ -66,7 +68,7 @@ class TestFeatureSelectorEdgeCases:
         with pytest.raises(PreprocessingError):
             selector.transform(X)
 
-    def test_fit_exception_handling(self):
+    def test_fit_exception_handling(self) -> None:
         """Test exception handling in fit method."""
         X = np.array([[1, 2, 3], [4, 5, 6]])
         selector = FeatureSelector(k=2)
@@ -87,7 +89,7 @@ class TestFeatureSelectorEdgeCases:
 class TestPolynomialPreprocessorEdgeCases:
     """Tests for PolynomialPreprocessor edge cases."""
 
-    def test_transform_not_fitted(self):
+    def test_transform_not_fitted(self) -> None:
         """Test transform without fitting first."""
         X = np.array([[1, 2], [3, 4]])
         poly = PolynomialPreprocessor(degree=2)
@@ -95,7 +97,7 @@ class TestPolynomialPreprocessorEdgeCases:
         with pytest.raises(PreprocessingError):
             poly.transform(X)
 
-    def test_fit_transform_error_handling(self):
+    def test_fit_transform_error_handling(self) -> None:
         """Test error handling in fit_transform method."""
         X = np.array([[1, 2], [3, 4]])
         poly = PolynomialPreprocessor(degree=2)
@@ -103,7 +105,7 @@ class TestPolynomialPreprocessorEdgeCases:
         # Use monkey patching to simulate a problematic transformer
         from types import MethodType
 
-        def mock_fit(self, X, y=None):
+        def mock_fit(self, X: np.ndarray, y: Optional[np.ndarray] = None) -> None:
             raise ValueError("Simulated fit error")
 
         # Apply mock to transformer
@@ -115,7 +117,7 @@ class TestPolynomialPreprocessorEdgeCases:
         # Clean up by creating a new instance
         poly = PolynomialPreprocessor(degree=2)
 
-    def test_transform_error_handling(self):
+    def test_transform_error_handling(self) -> None:
         """Test error handling in transform method."""
         X = np.array([[1, 2], [3, 4]])
         poly = PolynomialPreprocessor(degree=2)
@@ -124,7 +126,7 @@ class TestPolynomialPreprocessorEdgeCases:
         # Use monkey patching to simulate a problematic transformer
         from types import MethodType
 
-        def mock_transform(self, X):
+        def mock_transform(self, X: np.ndarray) -> None:
             raise ValueError("Simulated transform error")
 
         # Apply mock to transformer

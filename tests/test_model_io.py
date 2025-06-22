@@ -11,7 +11,7 @@ from ml_library.models import LinearModel, LogisticModel, RandomForestModel
 
 
 @pytest.fixture
-def sample_data():
+def sample_data() -> tuple[np.ndarray, np.ndarray, np.ndarray]:
     """Generate sample data for testing."""
     X = np.array([[1, 2], [3, 4], [5, 6], [7, 8]])
     y_reg = np.array([2, 4, 6, 8])  # Linear relationship for regression
@@ -19,7 +19,7 @@ def sample_data():
     return X, y_reg, y_cls
 
 
-def test_save_untrained_model():
+def test_save_untrained_model() -> None:
     """Test saving an untrained model raises error."""
     model = LinearModel()
     with tempfile.NamedTemporaryFile(suffix=".pkl") as tmp:
@@ -27,7 +27,7 @@ def test_save_untrained_model():
             model.save(tmp.name)
 
 
-def test_save_load_linear_model(sample_data):
+def test_save_load_linear_model(sample_data: tuple[np.ndarray, np.ndarray, np.ndarray]) -> None:
     """Test saving and loading a LinearModel."""
     X, y, _ = sample_data
 
@@ -72,7 +72,7 @@ def test_save_load_linear_model(sample_data):
             os.remove(model_path)
 
 
-def test_save_load_logistic_model(sample_data):
+def test_save_load_logistic_model(sample_data: tuple[np.ndarray, np.ndarray, np.ndarray]) -> None:
     """Test saving and loading a LogisticModel."""
     X, _, y = sample_data
 
@@ -114,7 +114,7 @@ def test_save_load_logistic_model(sample_data):
             os.remove(model_path)
 
 
-def test_save_load_random_forest_model(sample_data):
+def test_save_load_random_forest_model(sample_data: tuple[np.ndarray, np.ndarray, np.ndarray]) -> None:
     """Test saving and loading a RandomForestModel."""
     X, _, y = sample_data
 
@@ -156,14 +156,14 @@ def test_save_load_random_forest_model(sample_data):
             os.remove(model_path)
 
 
-def test_load_nonexistent_file():
+def test_load_nonexistent_file() -> None:
     """Test loading a model from a nonexistent file raises IOError."""
     nonexistent_path = "/path/to/nonexistent/model.pkl"
     with pytest.raises(IOError):
         LinearModel.load(nonexistent_path)
 
 
-def test_load_wrong_model_type(sample_data):
+def test_load_wrong_model_type(sample_data: tuple[np.ndarray, np.ndarray, np.ndarray]) -> None:
     """Test loading a model into the wrong class type raises ValueError."""
     X, y, _ = sample_data
 

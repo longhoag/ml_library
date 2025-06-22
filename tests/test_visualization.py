@@ -1,7 +1,7 @@
 """Test visualization functions."""
 import os
 import unittest
-from unittest.mock import patch
+from unittest.mock import MagicMock, patch
 
 import numpy as np
 from sklearn.linear_model import LinearRegression
@@ -42,7 +42,7 @@ class TestVisualization(unittest.TestCase):
         self.model = LinearRegression()
 
     @patch("ml_library.visualization.learning_curve")
-    def test_plot_learning_curve(self, mock_learning_curve) -> None:
+    def test_plot_learning_curve(self, mock_learning_curve: MagicMock) -> None:
         """Test plotting of scikit-learn learning curve.
 
         Verifies that learning curve can be plotted for a model.

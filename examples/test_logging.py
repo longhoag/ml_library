@@ -18,7 +18,7 @@ from ml_library.models import LinearModel
 logger = get_logger(__name__)
 
 
-def test_logging(level="info", log_file=None):
+def test_logging(level="info", log_file=None) -> None:
     """Test logging functionality at different levels.
 
     Parameters
@@ -49,7 +49,7 @@ def test_logging(level="info", log_file=None):
         logger.exception("Caught an exception: %s", str(e))
 
 
-def test_error_handling():
+def test_error_handling() -> None:
     """Test error handling with custom exceptions."""
     try:
         # Test MLLibraryError (base error)
@@ -93,7 +93,7 @@ def test_error_handling():
         logger.exception("Caught InvalidParameterError: %s", str(e))
 
 
-def main():
+def main() -> None:
     """Run the logging tests."""
     parser = argparse.ArgumentParser(description="Test ML Library logging")
     parser.add_argument(
