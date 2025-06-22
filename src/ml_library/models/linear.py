@@ -1,6 +1,9 @@
 """Linear model implementations."""
 
+from typing import Any, Dict, Optional
+
 import numpy as np
+from numpy.typing import NDArray
 from sklearn.linear_model import LinearRegression, LogisticRegression
 from sklearn.metrics import (
     accuracy_score,
@@ -11,6 +14,7 @@ from sklearn.metrics import (
     r2_score,
     recall_score,
 )
+from typing_extensions import Self
 
 from ml_library.exceptions import DataError, NotFittedError
 from ml_library.logging import get_logger
@@ -31,13 +35,13 @@ class LinearModel(Model):
         Whether to calculate the intercept for this model.
     """
 
-    def __init__(self, fit_intercept=True):
+    def __init__(self, fit_intercept: bool = True) -> None:
         """Initialize the linear model."""
         super().__init__()
         self.fit_intercept = fit_intercept
         self.model = LinearRegression(fit_intercept=fit_intercept)
 
-    def train(self, X, y, **kwargs):
+    def train(self, X: NDArray[Any], y: NDArray[Any], **kwargs: Any) -> Self:
         """Train the linear regression model.
 
         Parameters
@@ -71,7 +75,7 @@ class LinearModel(Model):
                 f"Error training LinearModel: {str(e)}", data_shape=np.shape(X)
             ) from e
 
-    def predict(self, X, **kwargs):
+    def predict(self, X: NDArray[Any], **kwargs: Any) -> NDArray[Any]:
         """Make predictions using the linear regression model.
 
         Parameters
@@ -111,7 +115,9 @@ class LinearModel(Model):
                 f"Error predicting: {str(e)}", data_shape=np.shape(X)
             ) from e
 
-    def evaluate(self, X, y, metrics=None):
+    def evaluate(
+        self, X: NDArray[Any], y: NDArray[Any], metrics: Optional[Dict[str, Any]] = None
+    ) -> Dict[str, float]:
         """Evaluate the linear regression model.
 
         Parameters
@@ -163,7 +169,7 @@ class LinearModel(Model):
             ) from e
 
     @property
-    def coef_(self):
+    def coef_(self) -> NDArray[Any]:
         """Get coefficients of the model."""
         if not self.fitted:
             logger.error("Attempted to access coefficients of untrained LinearModel")
@@ -174,7 +180,7 @@ class LinearModel(Model):
         return self.model.coef_
 
     @property
-    def intercept_(self):
+    def intercept_(self) -> Any:
         """Get intercept of the model."""
         if not self.fitted:
             logger.error("Attempted to access intercept of untrained LinearModel")
@@ -198,7 +204,9 @@ class LogisticModel(Model):
         Maximum number of iterations for solver.
     """
 
-    def __init__(self, fit_intercept=True, C=1.0, max_iter=100):
+    def __init__(
+        self, fit_intercept: bool = True, C: float = 1.0, max_iter: int = 100
+    ) -> None:
         """Initialize the logistic regression model."""
         super().__init__()
         self.fit_intercept = fit_intercept
@@ -208,7 +216,7 @@ class LogisticModel(Model):
             fit_intercept=fit_intercept, C=C, max_iter=max_iter
         )
 
-    def train(self, X, y, **kwargs):
+    def train(self, X: NDArray[Any], y: NDArray[Any], **kwargs: Any) -> Self:
         """Train the logistic regression model.
 
         Parameters
@@ -244,7 +252,7 @@ class LogisticModel(Model):
                 f"Error training LogisticModel: {str(e)}", data_shape=np.shape(X)
             ) from e
 
-    def predict(self, X, **kwargs):
+    def predict(self, X: NDArray[Any], **kwargs: Any) -> NDArray[Any]:
         """Make predictions using the logistic regression model.
 
         Parameters
@@ -280,7 +288,7 @@ class LogisticModel(Model):
                 f"Error predicting: {str(e)}", data_shape=np.shape(X)
             ) from e
 
-    def predict_proba(self, X):
+    def predict_proba(self, X: NDArray[Any]) -> NDArray[Any]:
         """Predict class probabilities.
 
         Parameters
@@ -318,7 +326,9 @@ class LogisticModel(Model):
                 f"Error predicting probabilities: {str(e)}", data_shape=np.shape(X)
             ) from e
 
-    def evaluate(self, X, y, metrics=None):
+    def evaluate(
+        self, X: NDArray[Any], y: NDArray[Any], metrics: Optional[Dict[str, Any]] = None
+    ) -> Dict[str, float]:
         """Evaluate the logistic regression model.
 
         Parameters
@@ -371,7 +381,7 @@ class LogisticModel(Model):
             ) from e
 
     @property
-    def coef_(self):
+    def coef_(self) -> NDArray[Any]:
         """Get coefficients of the model."""
         if not self.fitted:
             logger.error("Attempted to access coefficients of untrained LogisticModel")
@@ -382,7 +392,7 @@ class LogisticModel(Model):
         return self.model.coef_
 
     @property
-    def intercept_(self):
+    def intercept_(self) -> NDArray[Any]:
         """Get intercept of the model."""
         if not self.fitted:
             logger.error("Attempted to access intercept of untrained LogisticModel")
@@ -393,7 +403,7 @@ class LogisticModel(Model):
         return self.model.intercept_
 
     @property
-    def classes_(self):
+    def classes_(self) -> NDArray[Any]:
         """Get class labels."""
         if not self.fitted:
             logger.error("Attempted to access classes of untrained LogisticModel")

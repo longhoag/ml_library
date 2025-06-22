@@ -83,7 +83,9 @@ class PolynomialPreprocessor(Preprocessor):
 class FeatureSelector(Preprocessor):
     """Select top k features based on variance."""
 
-    def __init__(self, k: Optional[int] = None, feature_indices=None) -> None:
+    def __init__(
+        self, k: Optional[int] = None, feature_indices: Optional[list] = None
+    ) -> None:
         """Initialize FeatureSelector.
 
         Args:

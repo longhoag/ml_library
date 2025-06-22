@@ -1,15 +1,18 @@
 """Visualization utilities."""
 
-from typing import Optional, Sequence
+from typing import Any, Optional, Sequence
 
 import matplotlib.pyplot as plt
 import numpy as np
+from matplotlib.figure import Figure
 from sklearn.model_selection import learning_curve
 
 __all__ = ["plot_learning_curve", "plot_learning_curves"]
 
 
-def plot_learning_curve(model, X, y, cv=5, n_jobs=None):
+def plot_learning_curve(
+    model: Any, X: np.ndarray, y: np.ndarray, cv: int = 5, n_jobs: Optional[int] = None
+) -> Figure:
     """Plot learning curve for a model.
 
     Parameters

@@ -3,6 +3,7 @@ import unittest
 
 import numpy as np
 import pytest
+from numpy.typing import NDArray
 
 from ml_library.metrics import accuracy, f1, precision, r2, recall, roc_auc
 
@@ -10,7 +11,7 @@ from ml_library.metrics import accuracy, f1, precision, r2, recall, roc_auc
 class TestMetricsEdgeCases(unittest.TestCase):
     """Test edge cases for metrics functions."""
 
-    def test_precision_zero_division(self):
+    def test_precision_zero_division(self) -> None:
         """Test precision when there are no predicted positives."""
         y_true = np.array([0, 0, 0, 0], dtype=np.float64)
         y_pred = np.array([0, 0, 0, 0], dtype=np.float64)
@@ -23,7 +24,7 @@ class TestMetricsEdgeCases(unittest.TestCase):
         result = precision(y_true, y_pred, zero_division=0.5)
         self.assertEqual(result, 0.5)
 
-    def test_recall_zero_division(self):
+    def test_recall_zero_division(self) -> None:
         """Test recall when there are no actual positives."""
         y_true = np.array([0, 0, 0, 0], dtype=np.float64)
         y_pred = np.array([1, 0, 1, 0], dtype=np.float64)
@@ -36,7 +37,7 @@ class TestMetricsEdgeCases(unittest.TestCase):
         result = recall(y_true, y_pred, zero_division=0.5)
         self.assertEqual(result, 0.5)
 
-    def test_f1_zero_division(self):
+    def test_f1_zero_division(self) -> None:
         """Test F1 score when both precision and recall are 0."""
         # Case 1: No predicted positives
         y_true = np.array([1, 1, 1, 1], dtype=np.float64)
@@ -56,7 +57,7 @@ class TestMetricsEdgeCases(unittest.TestCase):
         result = f1(y_true, y_pred, zero_division=0.5)
         self.assertEqual(result, 0.5)
 
-    def test_r2_all_same_values(self):
+    def test_r2_all_same_values(self) -> None:
         """Test R² score when all true values are the same."""
         y_true = np.array([5, 5, 5, 5], dtype=np.float64)
         y_pred = np.array([4, 6, 5, 7], dtype=np.float64)
@@ -64,7 +65,7 @@ class TestMetricsEdgeCases(unittest.TestCase):
         result = r2(y_true, y_pred)
         self.assertEqual(result, 0.0)
 
-    def test_roc_auc_edge_cases(self):
+    def test_roc_auc_edge_cases(self) -> None:
         """Test ROC AUC score with edge cases."""
         # Case 1: No positive samples
         y_true = np.array([0, 0, 0, 0], dtype=np.float64)
@@ -111,7 +112,9 @@ class TestMetricsEdgeCases(unittest.TestCase):
         ),
     ],
 )
-def test_accuracy_parametrized(y_true, y_pred, expected):
+def test_accuracy_parametrized(
+    y_true: NDArray[np.float64], y_pred: NDArray[np.float64], expected: float
+) -> None:
     """Test accuracy with various scenarios using parametrization."""
     result = accuracy(y_true, y_pred)
     assert result == expected

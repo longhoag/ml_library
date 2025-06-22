@@ -3,6 +3,7 @@
 import os
 import tempfile
 import unittest
+from typing import Any
 
 import numpy as np
 from numpy.typing import NDArray
@@ -14,7 +15,7 @@ from ml_library.models.base import Model
 class TestModelBase(unittest.TestCase):
     """Test for the base Model class functionality."""
 
-    def test_base_model_not_implemented_methods(self):
+    def test_base_model_not_implemented_methods(self) -> None:
         """Test that base model class raises NotImplementedError."""
         model = Model()
         X = np.array([[1, 2], [3, 4]])
@@ -32,7 +33,7 @@ class TestModelBase(unittest.TestCase):
         with self.assertRaises(NotImplementedError):
             model.predict(X)
 
-    def test_evaluate_not_fitted(self):
+    def test_evaluate_not_fitted(self) -> None:
         """Test evaluate method when model is not fitted."""
         model = Model()
         X = np.array([[1, 2], [3, 4]])
@@ -41,7 +42,7 @@ class TestModelBase(unittest.TestCase):
         with self.assertRaises(NotFittedError):
             model.evaluate(X, y)
 
-    def test_evaluate_default_behavior(self):
+    def test_evaluate_default_behavior(self) -> None:
         """Test default evaluate implementation."""
         model = Model()
         model.fitted = True  # Simulate fitted model
@@ -51,7 +52,7 @@ class TestModelBase(unittest.TestCase):
         metrics = model.evaluate(X, y)
         self.assertEqual(metrics, {})  # Should return empty dict by default
 
-    def test_save_and_load(self):
+    def test_save_and_load(self) -> None:
         """Test save and load methods of base model."""
         model = Model()
         model.fitted = True  # Need to set this manually for testing
@@ -84,19 +85,19 @@ class TestModelBase(unittest.TestCase):
 class MockModel(Model):
     """Mock model implementation for testing Model base class."""
 
-    def train(self, X: NDArray, y: NDArray, **kwargs) -> "MockModel":
+    def train(self, X: NDArray, y: NDArray, **kwargs: Any) -> "MockModel":
         """Mock implementation of train."""
         self.fitted = True
         return self
 
-    def predict(self, X: NDArray, **kwargs) -> NDArray:
+    def predict(self, X: NDArray, **kwargs: Any) -> NDArray:
         """Mock implementation of predict."""
         if not self.fitted:
             raise NotFittedError("Model not fitted")
         return np.zeros(len(X))
 
 
-def test_mock_model():
+def test_mock_model() -> None:
     """Test Model class with a concrete implementation."""
     model = MockModel()
     X = np.array([[1, 2], [3, 4]])
@@ -113,7 +114,7 @@ def test_mock_model():
     assert len(pred) == len(X)
 
 
-def test_str_and_repr():
+def test_str_and_repr() -> None:
     """Test string representation of Model objects."""
     model = Model()
     str_rep = str(model)

@@ -1,6 +1,6 @@
 """Standard preprocessing transformations."""
 
-from typing import Any
+from typing import Any, Optional
 
 import numpy as np
 from numpy.typing import NDArray
@@ -40,7 +40,9 @@ class StandardScaler:
         self.scale_ = None
         self.fitted = False
 
-    def fit(self, X: NDArray, y=None) -> "StandardScaler":
+    def fit(
+        self, X: NDArray[Any], y: Optional[NDArray[Any]] = None
+    ) -> "StandardScaler":
         """Compute the mean and std to be used for later scaling.
 
         Args:
@@ -84,7 +86,9 @@ class StandardScaler:
 
         return (X - self.mean_) / self.scale_
 
-    def fit_transform(self, X: NDArray, y=None) -> NDArray:
+    def fit_transform(
+        self, X: NDArray[Any], y: Optional[NDArray[Any]] = None
+    ) -> NDArray[Any]:
         """Fit to data, then transform it.
 
         Args:
@@ -112,7 +116,11 @@ class StandardPreprocessor(Preprocessor):
         categorical.
     """
 
-    def __init__(self, numerical_features=None, categorical_features=None):
+    def __init__(
+        self,
+        numerical_features: Optional[list] = None,
+        categorical_features: Optional[list] = None,
+    ) -> None:
         """Initialize the standard preprocessor."""
         super().__init__()
         self.numerical_features = numerical_features
@@ -154,7 +162,9 @@ class StandardPreprocessor(Preprocessor):
             # If no specific features are provided, use a simple StandardScaler
             self.transformer = Pipeline([("scaler", StandardScaler())])
 
-    def fit(self, X: NDArray, y=None) -> "StandardPreprocessor":
+    def fit(
+        self, X: NDArray[Any], y: Optional[NDArray[Any]] = None
+    ) -> "StandardPreprocessor":
         """Fit the preprocessor to the data.
 
         Parameters
@@ -217,7 +227,7 @@ class MinMaxScaler:
     X_scaled = (X - X_min) / (X_max - X_min)
     """
 
-    def __init__(self, feature_range=(0, 1)):
+    def __init__(self, feature_range: tuple = (0, 1)) -> None:
         """Initialize MinMaxScaler.
 
         Args:
@@ -231,7 +241,7 @@ class MinMaxScaler:
         self.data_range_ = None
         self.fitted = False
 
-    def fit(self, X: NDArray, y=None) -> "MinMaxScaler":
+    def fit(self, X: NDArray[Any], y: Optional[NDArray[Any]] = None) -> "MinMaxScaler":
         """Compute min and max to be used for scaling.
 
         Args:
@@ -256,8 +266,13 @@ class MinMaxScaler:
         data_range = data_max - data_min
         self.data_range_ = _handle_zeros_in_scale(data_range)
 
+        # Initialize scale_ as numpy array before division
         self.scale_ = np.ones_like(data_range) * (feature_range[1] - feature_range[0])
-        self.scale_ = self.scale_ / self.data_range_
+
+        # Ensure data_range_ is not None before division
+        if self.data_range_ is not None:
+            self.scale_ = self.scale_ / self.data_range_
+
         self.min_ = feature_range[0] - data_min * self.scale_
         self.fitted = True
 
@@ -285,7 +300,9 @@ class MinMaxScaler:
 
         return X * self.scale_ + self.min_
 
-    def fit_transform(self, X: NDArray, y=None) -> NDArray:
+    def fit_transform(
+        self, X: NDArray[Any], y: Optional[NDArray[Any]] = None
+    ) -> NDArray[Any]:
         """Fit to data, then transform it.
 
         Args:

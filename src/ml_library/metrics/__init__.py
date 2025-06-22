@@ -52,8 +52,8 @@ def precision(
     float
         Precision score.
     """
-    true_positives = np.sum((y_true == 1) & (y_pred == 1))
-    predicted_positives = np.sum(y_pred == 1)
+    true_positives: float = np.sum((y_true == 1) & (y_pred == 1))
+    predicted_positives: float = np.sum(y_pred == 1)
 
     if predicted_positives == 0:
         return zero_division
@@ -80,8 +80,8 @@ def recall(
     float
         Recall score.
     """
-    true_positives = np.sum((y_true == 1) & (y_pred == 1))
-    actual_positives = np.sum(y_true == 1)
+    true_positives: float = np.sum((y_true == 1) & (y_pred == 1))
+    actual_positives: float = np.sum(y_true == 1)
 
     if actual_positives == 0:
         return zero_division
@@ -168,8 +168,8 @@ def r2(y_true: NDArray[np.float64], y_pred: NDArray[np.float64]) -> float:
     float
         R2 score.
     """
-    ss_total = np.sum((y_true - np.mean(y_true)) ** 2)
-    ss_residual = np.sum((y_true - y_pred) ** 2)
+    ss_total: float = np.sum((y_true - np.mean(y_true)) ** 2)
+    ss_residual: float = np.sum((y_true - y_pred) ** 2)
 
     if ss_total == 0:
         return 0.0
@@ -196,7 +196,7 @@ def roc_auc(y_true: NDArray[np.float64], y_score: NDArray[np.float64]) -> float:
     sorted_indices = np.argsort(y_score)[::-1]
     y_true = y_true[sorted_indices]
 
-    n_pos = np.sum(y_true == 1)
+    n_pos: float = np.sum(y_true == 1)
     n_neg = len(y_true) - n_pos
 
     if n_pos == 0 or n_neg == 0:

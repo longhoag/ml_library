@@ -13,7 +13,7 @@ from ml_library.exceptions import (
 )
 
 
-def test_ml_library_error():
+def test_ml_library_error() -> None:
     """Test MLLibraryError initialization."""
     # Test with default message
     error = MLLibraryError()
@@ -25,7 +25,7 @@ def test_ml_library_error():
     assert error.message == "Custom error message"
 
 
-def test_data_error():
+def test_data_error() -> None:
     """Test DataError initialization."""
     # Test with default message
     error = DataError()
@@ -43,7 +43,7 @@ def test_data_error():
     assert error.data_shape == (10, 5)
 
 
-def test_model_error():
+def test_model_error() -> None:
     """Test ModelError initialization."""
     # Test with default message
     error = ModelError()
@@ -69,7 +69,7 @@ def test_model_error():
     assert error.details == details
 
 
-def test_not_fitted_error():
+def test_not_fitted_error() -> None:
     """Test NotFittedError initialization."""
     # Test with default message
     error = NotFittedError()
@@ -84,7 +84,7 @@ def test_not_fitted_error():
     assert error.model_type == "LinearRegression"
 
 
-def test_invalid_parameter_error():
+def test_invalid_parameter_error() -> None:
     """Test InvalidParameterError initialization."""
     # Test with minimal parameters
     error = InvalidParameterError("learning_rate", -0.1)
@@ -111,7 +111,7 @@ def test_invalid_parameter_error():
     assert str(error) == "n_estimators must be positive"
 
 
-def test_preprocessing_error():
+def test_preprocessing_error() -> None:
     """Test PreprocessingError initialization."""
     # Test with default message
     error = PreprocessingError()
@@ -148,7 +148,7 @@ def test_preprocessing_error():
     assert error.data_shape == (50, 5)
 
 
-def test_validation_error():
+def test_validation_error() -> None:
     """Test ValidationError initialization."""
     # Test with default message
     error = ValidationError()
@@ -170,7 +170,7 @@ def test_validation_error():
     assert error.context == context
 
 
-def test_inheritance():
+def test_inheritance() -> None:
     """Test inheritance hierarchy of exceptions."""
     # Test that all errors are instances of MLLibraryError
     assert issubclass(DataError, MLLibraryError)
