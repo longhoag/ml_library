@@ -1,6 +1,6 @@
 """Example usage of the ML library."""
 
-import numpy as np
+# No numpy import needed here
 from sklearn.datasets import make_classification
 from sklearn.model_selection import train_test_split
 
@@ -30,7 +30,7 @@ def main():
 
     # Evaluate the model
     score = model.evaluate(X_test_processed, y_test)
-    print(f"Model accuracy: {score:.4f}")
+    print(f"Model accuracy: {score: .4f}")
 
     # Save the model
     model.save("model.pkl")
@@ -39,7 +39,7 @@ def main():
     # Load the model
     loaded_model = Model.load("model.pkl")
     loaded_score = loaded_model.evaluate(X_test_processed, y_test)
-    print(f"Loaded model accuracy: {loaded_score:.4f}")
+    print(f"Loaded model accuracy: {loaded_score: .4f}")
 
 
 if __name__ == "__main__":

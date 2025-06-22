@@ -6,7 +6,7 @@ from sklearn.datasets import load_breast_cancer
 
 from ml_library import (
     LogisticModel,
-    RandomForestClassifier,
+    RandomForestModel,
     StandardPreprocessor,
     accuracy,
     f1,
@@ -21,9 +21,13 @@ from ml_library import (
 def main():
     """Run a complete example using breast cancer dataset."""
     # Load the dataset
-    data = load_breast_cancer()
-    X, y = data.data, data.target
-    feature_names = data.feature_names
+    # The IDE type checker may show errors for sklearn Bunch attributes, but the code runs fine
+    dataset = load_breast_cancer()
+    # pylint: disable=no-member
+    X = dataset.data  # type: ignore
+    y = dataset.target  # type: ignore
+    feature_names = dataset.feature_names  # type: ignore
+    # pylint: enable=no-member
 
     print(f"Dataset shape: {X.shape}")
     print(f"Number of classes: {len(np.unique(y))}")
@@ -48,11 +52,11 @@ def main():
     y_prob_logistic = logistic_model.predict_proba(X_test_processed)
 
     # Evaluate
-    print(f"Accuracy: {accuracy(y_test, y_pred_logistic):.4f}")
-    print(f"Precision: {precision(y_test, y_pred_logistic):.4f}")
-    print(f"Recall: {recall(y_test, y_pred_logistic):.4f}")
-    print(f"F1 Score: {f1(y_test, y_pred_logistic):.4f}")
-    print(f"ROC AUC: {roc_auc(y_test, y_prob_logistic[:, 1]):.4f}")
+    print(f"Accuracy: {accuracy(y_test, y_pred_logistic): .4f}")
+    print(f"Precision: {precision(y_test, y_pred_logistic): .4f}")
+    print(f"Recall: {recall(y_test, y_pred_logistic): .4f}")
+    print(f"F1 Score: {f1(y_test, y_pred_logistic): .4f}")
+    print(f"ROC AUC: {roc_auc(y_test, y_prob_logistic[:, 1]): .4f}")
 
     # Train and evaluate random forest model
     print("\n--- Random Forest Model ---")
@@ -64,11 +68,11 @@ def main():
     y_prob_rf = rf_model.predict_proba(X_test_processed)
 
     # Evaluate
-    print(f"Accuracy: {accuracy(y_test, y_pred_rf):.4f}")
-    print(f"Precision: {precision(y_test, y_pred_rf):.4f}")
-    print(f"Recall: {recall(y_test, y_pred_rf):.4f}")
-    print(f"F1 Score: {f1(y_test, y_pred_rf):.4f}")
-    print(f"ROC AUC: {roc_auc(y_test, y_prob_rf[:, 1]):.4f}")
+    print(f"Accuracy: {accuracy(y_test, y_pred_rf): .4f}")
+    print(f"Precision: {precision(y_test, y_pred_rf): .4f}")
+    print(f"Recall: {recall(y_test, y_pred_rf): .4f}")
+    print(f"F1 Score: {f1(y_test, y_pred_rf): .4f}")
+    print(f"ROC AUC: {roc_auc(y_test, y_prob_rf[:, 1]): .4f}")
 
     # Get feature importances
     importances = rf_model.feature_importances_

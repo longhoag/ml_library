@@ -1,8 +1,6 @@
 """Test basic functionality."""
 
-import pytest
-
-from ml_library import Model, Preprocessor
+from ml_library import Preprocessor
 
 
 def test_preprocessor_init():
@@ -13,30 +11,39 @@ def test_preprocessor_init():
 
 def test_preprocessor_fit():
     """Test that preprocessor fit method works."""
+    import numpy as np
     preprocessor = Preprocessor()
-    X = [[1, 2], [3, 4]]
-    y = [0, 1]
-    
+    X = np.array([[1, 2], [3, 4]])
+    y = np.array([0, 1])
+
     result = preprocessor.fit(X, y)
-    
+
     assert preprocessor.fitted is True
     assert result is preprocessor
 
 
 def test_model_init():
     """Test that model initializes correctly."""
-    model = Model()
-    assert model.trained is False
-    assert model.model is None
+    # Model is abstract base class, can't be instantiated directly
+    # So we use a concrete subclass or patching for testing
+    from ml_library.models.linear import LinearModel
+
+    model = LinearModel()
+    assert model.fitted is False
 
 
 def test_model_train():
     """Test that model train method works."""
-    model = Model()
-    X = [[1, 2], [3, 4]]
-    y = [0, 1]
-    
+    # Model is abstract base class, can't be instantiated directly
+    # So we use a concrete subclass for testing
+    import numpy as np
+    from ml_library.models.linear import LinearModel
+
+    model = LinearModel()
+    X = np.array([[1, 2], [3, 4]])
+    y = np.array([0, 1])
+
     result = model.train(X, y)
-    
-    assert model.trained is True
+
+    assert model.fitted is True
     assert result is model

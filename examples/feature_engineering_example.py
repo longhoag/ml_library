@@ -1,7 +1,8 @@
 """Example of using feature engineering techniques."""
 
 import matplotlib.pyplot as plt
-import numpy as np
+
+# No numpy import needed here
 from sklearn.datasets import make_regression
 
 from ml_library import (
@@ -18,8 +19,9 @@ from ml_library import (
 def main():
     """Run feature engineering example."""
     # Generate synthetic regression data with only 5 informative features
-    X, y = make_regression(
-        n_samples=200, n_features=20, n_informative=5, noise=20, random_state=42
+    X, y, _ = make_regression(
+        n_samples=200, n_features=20, n_informative=5, noise=20, random_state=42,
+        coef=True  # correct parameter name is 'coef', not 'return_coef'
     )
 
     print(f"Dataset shape: {X.shape}")
@@ -48,8 +50,8 @@ def main():
     r2_std = r2(y_test, y_pred_std)
     mse_std = mse(y_test, y_pred_std)
 
-    print(f"R² Score: {r2_std:.4f}")
-    print(f"MSE: {mse_std:.4f}")
+    print(f"R² Score: {r2_std: .4f}")
+    print(f"MSE: {mse_std: .4f}")
 
     # ----------------------------------------------------------
     # Approach 2: Feature selection
@@ -75,13 +77,15 @@ def main():
     r2_selected = r2(y_test, y_pred_selected)
     mse_selected = mse(y_test, y_pred_selected)
 
-    print(f"R² Score: {r2_selected:.4f}")
-    print(f"MSE: {mse_selected:.4f}")
+    print(f"R² Score: {r2_selected: .4f}")
+    print(f"MSE: {mse_selected: .4f}")
 
     # Plot feature importance scores
-    feature_scores = selector.scores_
-    plt.figure(figsize=(10, 6))
-    plt.bar(range(len(feature_scores)), feature_scores)
+    # Check if scores_ exists and is not None 
+    feature_scores = getattr(selector, 'scores_', None)
+    if feature_scores is not None:
+        plt.figure(figsize=(10, 6))
+        plt.bar(range(len(feature_scores)), feature_scores)
     plt.xlabel("Feature Index")
     plt.ylabel("Score")
     plt.title("Feature Importance Scores")
@@ -112,8 +116,8 @@ def main():
     r2_poly = r2(y_test, y_pred_poly)
     mse_poly = mse(y_test, y_pred_poly)
 
-    print(f"R² Score: {r2_poly:.4f}")
-    print(f"MSE: {mse_poly:.4f}")
+    print(f"R² Score: {r2_poly: .4f}")
+    print(f"MSE: {mse_poly: .4f}")
 
     # Compare results
     print("\n--- Comparison ---")
@@ -124,7 +128,7 @@ def main():
     }
 
     for name, metrics in results.items():
-        print(f"{name}: R² = {metrics['R²']:.4f}, MSE = {metrics['MSE']:.4f}")
+        print(f"{name}: R² = {metrics['R²']: .4f}, MSE = {metrics['MSE']: .4f}")
 
     # Plot comparison of predictions
     plt.figure(figsize=(12, 8))
@@ -132,21 +136,21 @@ def main():
     plt.subplot(221)
     plt.scatter(y_test, y_pred_std)
     plt.plot([y_test.min(), y_test.max()], [y_test.min(), y_test.max()], "r--")
-    plt.title(f"Standard - R²: {r2_std:.4f}")
+    plt.title(f"Standard - R²: {r2_std: .4f}")
     plt.xlabel("True Values")
     plt.ylabel("Predictions")
 
     plt.subplot(222)
     plt.scatter(y_test, y_pred_selected)
     plt.plot([y_test.min(), y_test.max()], [y_test.min(), y_test.max()], "r--")
-    plt.title(f"Feature Selection - R²: {r2_selected:.4f}")
+    plt.title(f"Feature Selection - R²: {r2_selected: .4f}")
     plt.xlabel("True Values")
     plt.ylabel("Predictions")
 
     plt.subplot(223)
     plt.scatter(y_test, y_pred_poly)
     plt.plot([y_test.min(), y_test.max()], [y_test.min(), y_test.max()], "r--")
-    plt.title(f"Polynomial - R²: {r2_poly:.4f}")
+    plt.title(f"Polynomial - R²: {r2_poly: .4f}")
     plt.xlabel("True Values")
     plt.ylabel("Predictions")
 

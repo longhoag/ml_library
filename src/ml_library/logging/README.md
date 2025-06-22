@@ -63,7 +63,7 @@ def process_data(X, y=None):
         # Validate data
         if X.shape[0] < 10:
             raise DataError("Not enough samples", data_shape=X.shape)
-            
+
         # Process data
         return processed_data
     except Exception as e:
@@ -73,7 +73,7 @@ def process_data(X, y=None):
 def predict(model, X):
     if not model.trained:
         raise NotFittedError("Model must be trained before prediction", model_type=model.__class__.__name__)
-    
+
     return model.predict(X)
 ```
 
@@ -83,7 +83,7 @@ def predict(model, X):
    ```python
    # Good
    logger.info("Processing %d samples", n_samples)
-   
+
    # Bad
    logger.info(f"Processing {n_samples} samples")
    ```

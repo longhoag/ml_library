@@ -46,7 +46,7 @@ try:
     # Save model
     model.save("model.pkl")
     logger.info("Model saved to model.pkl")
-    
+
 except Exception as e:
     logger.exception("Error in ML workflow: %s", str(e))
     # Handle the error appropriately
@@ -131,10 +131,26 @@ For more details on testing, see [tests/README.md](tests/README.md).
 
 Full documentation is available at [docs link].
 
+## Versioning and Releases
+
+This project follows [Semantic Versioning](https://semver.org/). For the versions available, see the [tags on this repository](https://github.com/longhoag/ml_library/tags).
+
+See [CHANGELOG.md](CHANGELOG.md) for a list of all notable changes to the project.
+
+## Distribution and Packaging
+
+The library is distributed as a Python package via PyPI. For detailed instructions on building, versioning, and distributing the package, see [DISTRIBUTION.md](DISTRIBUTION.md).
+
+To install the latest development version directly from the repository:
+
+```bash
+pip install git+https://github.com/longhoag/ml_library.git
+```
+
 ## Contributing
 
 Contributions are welcome! Please check our contribution guidelines before submitting a pull request.
 
 ## License
 
-This project is licensed under the MIT License - see the LICENSE file for details.
+This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.

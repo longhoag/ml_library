@@ -18,7 +18,7 @@ class MLLibraryError(Exception):
 
     def __init__(self, message: str = "An error occurred in ML Library"):
         """Initialize the exception.
-        
+
         Parameters
         ----------
         message : str, default="An error occurred in ML Library"
@@ -31,9 +31,11 @@ class MLLibraryError(Exception):
 class DataError(MLLibraryError):
     """Exception for errors in data handling or validation."""
 
-    def __init__(self, message: str = "Invalid data", data_shape: Optional[tuple] = None):
+    def __init__(
+        self, message: str = "Invalid data", data_shape: Optional[tuple] = None
+    ):
         """Initialize the data error.
-        
+
         Parameters
         ----------
         message : str, default="Invalid data"
@@ -57,7 +59,7 @@ class ModelError(MLLibraryError):
         details: Optional[Dict[str, Any]] = None,
     ):
         """Initialize the model error.
-        
+
         Parameters
         ----------
         message : str, default="Model error"
@@ -69,21 +71,23 @@ class ModelError(MLLibraryError):
         """
         self.model_type = model_type
         self.details = details or {}
-        
+
         model_info = f" in {model_type}" if model_type else ""
         full_message = f"{message}{model_info}"
         if details:
             full_message += f" (details: {details})"
-        
+
         super().__init__(full_message)
 
 
 class NotFittedError(ModelError):
     """Exception raised when a model is used before being fitted."""
 
-    def __init__(self, message: str = "Model is not fitted", model_type: Optional[str] = None):
+    def __init__(
+        self, message: str = "Model is not fitted", model_type: Optional[str] = None
+    ):
         """Initialize the not fitted error.
-        
+
         Parameters
         ----------
         message : str, default="Model is not fitted"
@@ -105,7 +109,7 @@ class InvalidParameterError(MLLibraryError):
         message: Optional[str] = None,
     ):
         """Initialize the invalid parameter error.
-        
+
         Parameters
         ----------
         param_name : str
@@ -139,7 +143,7 @@ class PreprocessingError(MLLibraryError):
         data_shape: Optional[tuple] = None,
     ):
         """Initialize the preprocessing error.
-        
+
         Parameters
         ----------
         message : str, default="Preprocessing error"
@@ -151,25 +155,29 @@ class PreprocessingError(MLLibraryError):
         """
         self.preprocessor_type = preprocessor_type
         self.data_shape = data_shape
-        
+
         info = []
         if preprocessor_type:
             info.append(f"preprocessor: {preprocessor_type}")
         if data_shape:
             info.append(f"data shape: {data_shape}")
-        
+
         extra_info = f" ({', '.join(info)})" if info else ""
         full_message = f"{message}{extra_info}"
-        
+
         super().__init__(full_message)
 
 
 class ValidationError(MLLibraryError):
     """Exception for validation errors."""
 
-    def __init__(self, message: str = "Validation error", context: Optional[Dict[str, Any]] = None):
+    def __init__(
+        self,
+        message: str = "Validation error",
+        context: Optional[Dict[str, Any]] = None,
+    ):
         """Initialize the validation error.
-        
+
         Parameters
         ----------
         message : str, default="Validation error"
@@ -178,9 +186,9 @@ class ValidationError(MLLibraryError):
             Additional context information related to the validation error.
         """
         self.context = context or {}
-        
+
         full_message = message
         if context:
             full_message += f" (context: {context})"
-            
+
         super().__init__(full_message)

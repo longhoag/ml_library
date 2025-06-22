@@ -19,9 +19,13 @@ from ml_library import (
 def main():
     """Run a complete example using diabetes dataset."""
     # Load the dataset
-    data = load_diabetes()
-    X, y = data.data, data.target
-    feature_names = data.feature_names
+    # The IDE type checker may show errors for sklearn Bunch attributes, but the code runs fine
+    dataset = load_diabetes()
+    # pylint: disable=no-member
+    X = dataset.data  # type: ignore
+    y = dataset.target  # type: ignore
+    feature_names = dataset.feature_names  # type: ignore
+    # pylint: enable=no-member
 
     print(f"Dataset shape: {X.shape}")
 
@@ -44,15 +48,15 @@ def main():
     y_pred_linear = linear_model.predict(X_test_processed)
 
     # Evaluate
-    print(f"Mean Squared Error: {mse(y_test, y_pred_linear):.2f}")
-    print(f"Mean Absolute Error: {mae(y_test, y_pred_linear):.2f}")
-    print(f"R² Score: {r2(y_test, y_pred_linear):.4f}")
+    print(f"Mean Squared Error: {mse(y_test, y_pred_linear): .2f}")
+    print(f"Mean Absolute Error: {mae(y_test, y_pred_linear): .2f}")
+    print(f"R² Score: {r2(y_test, y_pred_linear): .4f}")
 
     # Print coefficients
     print("\nModel Coefficients:")
     for name, coef in zip(feature_names, linear_model.coef_):
-        print(f"{name}: {coef:.4f}")
-    print(f"Intercept: {linear_model.intercept_:.4f}")
+        print(f"{name}: {coef: .4f}")
+    print(f"Intercept: {linear_model.intercept_: .4f}")
 
     # Train and evaluate random forest regressor model
     print("\n--- Random Forest Regressor Model ---")
@@ -63,9 +67,9 @@ def main():
     y_pred_rf = rf_model.predict(X_test_processed)
 
     # Evaluate
-    print(f"Mean Squared Error: {mse(y_test, y_pred_rf):.2f}")
-    print(f"Mean Absolute Error: {mae(y_test, y_pred_rf):.2f}")
-    print(f"R² Score: {r2(y_test, y_pred_rf):.4f}")
+    print(f"Mean Squared Error: {mse(y_test, y_pred_rf): .2f}")
+    print(f"Mean Absolute Error: {mae(y_test, y_pred_rf): .2f}")
+    print(f"R² Score: {r2(y_test, y_pred_rf): .4f}")
 
     # Get feature importances
     importances = rf_model.feature_importances_

@@ -1,21 +1,21 @@
-"""Metrics for evaluating model performance."""
+"""Metric functions for model evaluation."""
 
 import numpy as np
-from sklearn.metrics import (
-    accuracy_score,
-    f1_score,
-    mean_absolute_error,
-    mean_squared_error,
-    precision_score,
-    r2_score,
-    recall_score,
-    roc_auc_score,
-)
+from numpy.typing import NDArray
 
-__all__ = ["accuracy", "precision", "recall", "f1", "roc_auc", "mse", "mae", "r2"]
+__all__ = [
+    "accuracy",
+    "precision",
+    "recall",
+    "f1",
+    "mse",
+    "mae",
+    "r2",
+    "roc_auc",
+]
 
 
-def accuracy(y_true, y_pred):
+def accuracy(y_true: NDArray[np.float64], y_pred: NDArray[np.float64]) -> float:
     """Calculate accuracy score.
 
     Parameters
@@ -27,13 +27,15 @@ def accuracy(y_true, y_pred):
 
     Returns
     -------
-    score : float
+    float
         Accuracy score.
     """
-    return accuracy_score(y_true, y_pred)
+    return float(np.mean(y_true == y_pred))
 
 
-def precision(y_true, y_pred, average="weighted"):
+def precision(
+    y_true: NDArray[np.float64], y_pred: NDArray[np.float64], zero_division: float = 0.0
+) -> float:
     """Calculate precision score.
 
     Parameters
@@ -42,18 +44,26 @@ def precision(y_true, y_pred, average="weighted"):
         Ground truth labels.
     y_pred : array-like
         Predicted labels.
-    average : str, default='weighted'
-        Averaging strategy for multiclass problems.
+    zero_division : float, default=0.0
+        Value to return when there is a zero division.
 
     Returns
     -------
-    score : float
+    float
         Precision score.
     """
-    return precision_score(y_true, y_pred, average=average, zero_division=0)
+    true_positives = np.sum((y_true == 1) & (y_pred == 1))
+    predicted_positives = np.sum(y_pred == 1)
+
+    if predicted_positives == 0:
+        return zero_division
+
+    return float(true_positives / predicted_positives)
 
 
-def recall(y_true, y_pred, average="weighted"):
+def recall(
+    y_true: NDArray[np.float64], y_pred: NDArray[np.float64], zero_division: float = 0.0
+) -> float:
     """Calculate recall score.
 
     Parameters
@@ -62,18 +72,26 @@ def recall(y_true, y_pred, average="weighted"):
         Ground truth labels.
     y_pred : array-like
         Predicted labels.
-    average : str, default='weighted'
-        Averaging strategy for multiclass problems.
+    zero_division : float, default=0.0
+        Value to return when there is a zero division.
 
     Returns
     -------
-    score : float
+    float
         Recall score.
     """
-    return recall_score(y_true, y_pred, average=average, zero_division=0)
+    true_positives = np.sum((y_true == 1) & (y_pred == 1))
+    actual_positives = np.sum(y_true == 1)
+
+    if actual_positives == 0:
+        return zero_division
+
+    return float(true_positives / actual_positives)
 
 
-def f1(y_true, y_pred, average="weighted"):
+def f1(
+    y_true: NDArray[np.float64], y_pred: NDArray[np.float64], zero_division: float = 0.0
+) -> float:
     """Calculate F1 score.
 
     Parameters
@@ -82,42 +100,24 @@ def f1(y_true, y_pred, average="weighted"):
         Ground truth labels.
     y_pred : array-like
         Predicted labels.
-    average : str, default='weighted'
-        Averaging strategy for multiclass problems.
+    zero_division : float, default=0.0
+        Value to return when there is a zero division.
 
     Returns
     -------
-    score : float
+    float
         F1 score.
     """
-    return f1_score(y_true, y_pred, average=average, zero_division=0)
+    prec = precision(y_true, y_pred, zero_division)
+    rec = recall(y_true, y_pred, zero_division)
+
+    if prec == 0 and rec == 0:
+        return zero_division
+
+    return float(2 * (prec * rec) / (prec + rec))
 
 
-def roc_auc(y_true, y_score, multi_class="ovr"):
-    """Calculate ROC AUC score.
-
-    Parameters
-    ----------
-    y_true : array-like
-        Ground truth labels.
-    y_score : array-like
-        Predicted probabilities.
-    multi_class : str, default='ovr'
-        Multiclass strategy.
-
-    Returns
-    -------
-    score : float
-        ROC AUC score.
-    """
-    try:
-        return roc_auc_score(y_true, y_score, multi_class=multi_class)
-    except (ValueError, TypeError):
-        # Handle errors that can occur with inappropriate inputs
-        return np.nan
-
-
-def mse(y_true, y_pred):
+def mse(y_true: NDArray[np.float64], y_pred: NDArray[np.float64]) -> float:
     """Calculate mean squared error.
 
     Parameters
@@ -129,13 +129,13 @@ def mse(y_true, y_pred):
 
     Returns
     -------
-    score : float
+    float
         Mean squared error.
     """
-    return mean_squared_error(y_true, y_pred)
+    return float(np.mean((y_true - y_pred) ** 2))
 
 
-def mae(y_true, y_pred):
+def mae(y_true: NDArray[np.float64], y_pred: NDArray[np.float64]) -> float:
     """Calculate mean absolute error.
 
     Parameters
@@ -147,14 +147,14 @@ def mae(y_true, y_pred):
 
     Returns
     -------
-    score : float
+    float
         Mean absolute error.
     """
-    return mean_absolute_error(y_true, y_pred)
+    return float(np.mean(np.abs(y_true - y_pred)))
 
 
-def r2(y_true, y_pred):
-    """Calculate R² score.
+def r2(y_true: NDArray[np.float64], y_pred: NDArray[np.float64]) -> float:
+    """Calculate R2 score.
 
     Parameters
     ----------
@@ -165,7 +165,55 @@ def r2(y_true, y_pred):
 
     Returns
     -------
-    score : float
-        R² score.
+    float
+        R2 score.
     """
-    return r2_score(y_true, y_pred)
+    ss_total = np.sum((y_true - np.mean(y_true)) ** 2)
+    ss_residual = np.sum((y_true - y_pred) ** 2)
+
+    if ss_total == 0:
+        return 0.0
+
+    return float(1 - (ss_residual / ss_total))
+
+
+def roc_auc(y_true: NDArray[np.float64], y_score: NDArray[np.float64]) -> float:
+    """Calculate ROC AUC score.
+
+    Parameters
+    ----------
+    y_true : array-like
+        Ground truth labels.
+    y_score : array-like
+        Predicted probabilities or scores.
+
+    Returns
+    -------
+    float
+        ROC AUC score.
+    """
+    # Sort by predictions
+    sorted_indices = np.argsort(y_score)[::-1]
+    y_true = y_true[sorted_indices]
+
+    n_pos = np.sum(y_true == 1)
+    n_neg = len(y_true) - n_pos
+
+    if n_pos == 0 or n_neg == 0:
+        return 0.5
+
+    # Calculate true positive rate and false positive rate
+    tpr = np.cumsum(y_true) / n_pos
+    fpr = np.cumsum(1 - y_true) / n_neg
+
+    # Add endpoints
+    tpr = np.concatenate(([0], tpr, [1]))
+    fpr = np.concatenate(([0], fpr, [1]))
+
+    # Calculate AUC using trapezoidal rule
+    # Use trapezoid instead of trapz (which is deprecated)
+    if hasattr(np, 'trapezoid'):
+        return float(np.trapezoid(tpr, fpr))
+    else:
+        # Fallback to trapz for older numpy versions
+        return float(np.trapz(tpr, fpr))

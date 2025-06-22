@@ -22,12 +22,12 @@ LOG_LEVELS = {
 
 def get_logger(name: str) -> logging.Logger:
     """Get a logger with the specified name.
-    
+
     Parameters
     ----------
     name : str
         The name of the logger, usually __name__ of the calling module.
-        
+
     Returns
     -------
     logging.Logger
@@ -43,7 +43,7 @@ def configure_logging(
     capture_warnings: bool = True,
 ) -> None:
     """Configure the logging for the ML Library.
-    
+
     Parameters
     ----------
     level : str or int, default="info"
@@ -55,7 +55,7 @@ def configure_logging(
         Custom formatting string for log messages. If None, the default format is used.
     capture_warnings : bool, default=True
         Whether to capture warnings from the warnings module.
-        
+
     Returns
     -------
     None
@@ -104,7 +104,9 @@ def configure_logging(
 
     # Add a logger for the ml_library package
     ml_logger = logging.getLogger("ml_library")
-    ml_logger.info("ML Library logging configured with level: %s", logging.getLevelName(level))
+    ml_logger.info(
+        "ML Library logging configured with level: %s", logging.getLevelName(level)
+    )
 
 
 # Configure basic logging by default

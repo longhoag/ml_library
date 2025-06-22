@@ -1,9 +1,17 @@
 """Linear model implementations."""
 
 import numpy as np
-from sklearn.linear_model import LinearRegression, LogisticRegression
-from sklearn.metrics import accuracy_score, r2_score
 from sklearn.exceptions import NotFittedError as SklearnNotFittedError
+from sklearn.linear_model import LinearRegression, LogisticRegression
+from sklearn.metrics import (
+    accuracy_score,
+    f1_score,
+    mean_absolute_error,
+    mean_squared_error,
+    precision_score,
+    r2_score,
+    recall_score,
+)
 
 from ml_library.exceptions import DataError, NotFittedError
 from ml_library.logging import get_logger
@@ -30,7 +38,7 @@ class LinearModel(Model):
         self.fit_intercept = fit_intercept
         self.model = LinearRegression(fit_intercept=fit_intercept)
 
-    def train(self, X, y):
+    def train(self, X, y, **kwargs):
         """Train the linear regression model.
 
         Parameters
@@ -39,12 +47,14 @@ class LinearModel(Model):
             Training data.
         y : array-like of shape (n_samples,)
             Target values.
+        **kwargs : dict
+            Additional training parameters.
 
         Returns
         -------
         self : LinearModel
             The trained model.
-            
+
         Raises
         ------
         DataError
@@ -53,26 +63,30 @@ class LinearModel(Model):
         try:
             logger.info("Training LinearModel with data of shape %s", str(np.shape(X)))
             self.model.fit(X, y)
-            self.trained = True
+            self.fitted = True
             logger.debug("LinearModel successfully trained")
             return self
         except Exception as e:
             logger.exception("Error training LinearModel: %s", str(e))
-            raise DataError(f"Error training LinearModel: {str(e)}", data_shape=np.shape(X)) from e
+            raise DataError(
+                f"Error training LinearModel: {str(e)}", data_shape=np.shape(X)
+            ) from e
 
-    def predict(self, X):
+    def predict(self, X, **kwargs):
         """Make predictions using the linear regression model.
 
         Parameters
         ----------
         X : array-like of shape (n_samples, n_features)
             Data to make predictions on.
+        **kwargs : dict
+            Additional prediction parameters.
 
         Returns
         -------
         y_pred : array-like of shape (n_samples,)
             Predicted values.
-            
+
         Raises
         ------
         NotFittedError
@@ -80,23 +94,23 @@ class LinearModel(Model):
         DataError
             If there is an issue with the input data.
         """
-        if not self.trained:
+        if not self.fitted:
             logger.error("Attempted to predict with untrained LinearModel")
-            raise NotFittedError("Model must be trained before prediction", model_type="LinearModel")
-            
+            raise NotFittedError(
+                "Model must be trained before prediction", model_type="LinearModel"
+            )
+
         try:
-            logger.debug("Making predictions with LinearModel on data of shape %s", str(np.shape(X)))
+            logger.debug(
+                "Making predictions with LinearModel on data of shape %s",
+                str(np.shape(X)),
+            )
             return self.model.predict(X)
-        except SklearnNotFittedError as e:
-            # This shouldn't happen if self.trained is True, but just in case
-            logger.exception("Unexpected NotFittedError in LinearModel predict: %s", str(e))
-            self.trained = False  # Reset the trained flag to match reality
-            raise NotFittedError("Model is not properly fitted", model_type="LinearModel") from e
         except Exception as e:
             logger.exception("Error predicting with LinearModel: %s", str(e))
-            raise DataError(f"Error predicting with LinearModel: {str(e)}", data_shape=np.shape(X)) from e
+            raise DataError(f"Error predicting: {str(e)}", data_shape=np.shape(X)) from e
 
-    def evaluate(self, X, y):
+    def evaluate(self, X, y, metrics=None):
         """Evaluate the linear regression model.
 
         Parameters
@@ -105,12 +119,14 @@ class LinearModel(Model):
             Test data.
         y : array-like of shape (n_samples,)
             True target values.
+        metrics : dict, optional
+            Additional evaluation metrics.
 
         Returns
         -------
-        score : float
-            R² score.
-            
+        metrics_dict : dict
+            Dictionary containing evaluation metrics.
+
         Raises
         ------
         NotFittedError
@@ -118,54 +134,76 @@ class LinearModel(Model):
         DataError
             If there is an issue with the input data.
         """
-        if not self.trained:
+        if not self.fitted:
             logger.error("Attempted to evaluate untrained LinearModel")
-            raise NotFittedError("Model must be trained before evaluation", model_type="LinearModel")
-            
+            raise NotFittedError(
+                "Model must be trained before evaluation", model_type="LinearModel"
+            )
+
         try:
-            logger.debug("Evaluating LinearModel on data of shape %s", str(np.shape(X)))
             y_pred = self.predict(X)
-            score = r2_score(y, y_pred)
-            logger.info("LinearModel evaluation score: %.4f", score)
-            return score
+            metrics_dict = {
+                "r2": float(r2_score(y, y_pred)),
+                "mse": float(mean_squared_error(y, y_pred)),
+                "mae": float(mean_absolute_error(y, y_pred)),
+            }
+
+            # Add user-provided metrics if any
+            if metrics:
+                for name, metric_func in metrics.items():
+                    metrics_dict[name] = float(metric_func(y, y_pred))
+
+            logger.debug("Evaluation metrics: %s", str(metrics_dict))
+            return metrics_dict
         except Exception as e:
             logger.exception("Error evaluating LinearModel: %s", str(e))
-            raise DataError(f"Error evaluating LinearModel: {str(e)}", data_shape=np.shape(X)) from e
+            raise DataError(f"Error evaluating: {str(e)}", data_shape=np.shape(X)) from e
 
     @property
     def coef_(self):
         """Get coefficients of the model."""
-        if not self.trained:
-            raise ValueError("Model must be trained first")
+        if not self.fitted:
+            logger.error("Attempted to access coefficients of untrained LinearModel")
+            raise NotFittedError(
+                "Model must be trained before accessing coefficients",
+                model_type="LinearModel",
+            )
         return self.model.coef_
 
     @property
     def intercept_(self):
         """Get intercept of the model."""
-        if not self.trained:
-            raise ValueError("Model must be trained first")
+        if not self.fitted:
+            logger.error("Attempted to access intercept of untrained LinearModel")
+            raise NotFittedError(
+                "Model must be trained before accessing intercept",
+                model_type="LinearModel",
+            )
         return self.model.intercept_
 
 
 class LogisticModel(Model):
-    """Logistic regression model for classification.
+    """Logistic regression model.
 
     Parameters
     ----------
+    fit_intercept : bool, default=True
+        Whether to calculate the intercept for this model.
     C : float, default=1.0
         Inverse of regularization strength.
     max_iter : int, default=100
-        Maximum number of iterations.
+        Maximum number of iterations for solver.
     """
 
-    def __init__(self, C=1.0, max_iter=100):
-        """Initialize the logistic model."""
+    def __init__(self, fit_intercept=True, C=1.0, max_iter=100):
+        """Initialize the logistic regression model."""
         super().__init__()
+        self.fit_intercept = fit_intercept
         self.C = C
         self.max_iter = max_iter
-        self.model = LogisticRegression(C=C, max_iter=max_iter)
+        self.model = LogisticRegression(fit_intercept=fit_intercept, C=C, max_iter=max_iter)
 
-    def train(self, X, y):
+    def train(self, X, y, **kwargs):
         """Train the logistic regression model.
 
         Parameters
@@ -174,32 +212,64 @@ class LogisticModel(Model):
             Training data.
         y : array-like of shape (n_samples,)
             Target values.
+        **kwargs : dict
+            Additional training parameters.
 
         Returns
         -------
         self : LogisticModel
             The trained model.
-        """
-        self.model.fit(X, y)
-        self.trained = True
-        return self
 
-    def predict(self, X):
+        Raises
+        ------
+        DataError
+            If there is an issue with the input data.
+        """
+        try:
+            logger.info("Training LogisticModel with data of shape %s", str(np.shape(X)))
+            self.model.fit(X, y)
+            self.fitted = True
+            logger.debug("LogisticModel successfully trained")
+            return self
+        except Exception as e:
+            logger.exception("Error training LogisticModel: %s", str(e))
+            raise DataError(
+                f"Error training LogisticModel: {str(e)}", data_shape=np.shape(X)
+            ) from e
+
+    def predict(self, X, **kwargs):
         """Make predictions using the logistic regression model.
 
         Parameters
         ----------
         X : array-like of shape (n_samples, n_features)
             Data to make predictions on.
+        **kwargs : dict
+            Additional prediction parameters.
 
         Returns
         -------
         y_pred : array-like of shape (n_samples,)
             Predicted values.
+
+        Raises
+        ------
+        NotFittedError
+            If the model has not been trained.
+        DataError
+            If there is an issue with the input data.
         """
-        if not self.trained:
-            raise ValueError("Model must be trained before prediction")
-        return self.model.predict(X)
+        if not self.fitted:
+            logger.error("Attempted to predict with untrained LogisticModel")
+            raise NotFittedError(
+                "Model must be trained before prediction", model_type="LogisticModel"
+            )
+
+        try:
+            return self.model.predict(X)
+        except Exception as e:
+            logger.exception("Error predicting with LogisticModel: %s", str(e))
+            raise DataError(f"Error predicting: {str(e)}", data_shape=np.shape(X)) from e
 
     def predict_proba(self, X):
         """Predict class probabilities.
@@ -213,12 +283,31 @@ class LogisticModel(Model):
         -------
         y_proba : array-like of shape (n_samples, n_classes)
             Predicted class probabilities.
-        """
-        if not self.trained:
-            raise ValueError("Model must be trained before prediction")
-        return self.model.predict_proba(X)
 
-    def evaluate(self, X, y):
+        Raises
+        ------
+        NotFittedError
+            If the model has not been trained.
+        DataError
+            If there is an issue with the input data.
+        """
+        if not self.fitted:
+            logger.error("Attempted to predict probabilities with untrained LogisticModel")
+            raise NotFittedError(
+                "Model must be trained before prediction", model_type="LogisticModel"
+            )
+
+        try:
+            return self.model.predict_proba(X)
+        except Exception as e:
+            logger.exception(
+                "Error predicting probabilities with LogisticModel: %s", str(e)
+            )
+            raise DataError(
+                f"Error predicting probabilities: {str(e)}", data_shape=np.shape(X)
+            ) from e
+
+    def evaluate(self, X, y, metrics=None):
         """Evaluate the logistic regression model.
 
         Parameters
@@ -227,34 +316,76 @@ class LogisticModel(Model):
             Test data.
         y : array-like of shape (n_samples,)
             True target values.
+        metrics : dict, optional
+            Additional evaluation metrics.
 
         Returns
         -------
-        score : float
-            Accuracy score.
+        metrics_dict : dict
+            Dictionary containing various evaluation metrics.
+
+        Raises
+        ------
+        NotFittedError
+            If the model has not been trained.
+        DataError
+            If there is an issue with the input data.
         """
-        if not self.trained:
-            raise ValueError("Model must be trained before evaluation")
-        y_pred = self.predict(X)
-        return accuracy_score(y, y_pred)
+        if not self.fitted:
+            logger.error("Attempted to evaluate untrained LogisticModel")
+            raise NotFittedError(
+                "Model must be trained before evaluation", model_type="LogisticModel"
+            )
+
+        try:
+            y_pred = self.predict(X)
+            metrics_dict = {
+                "accuracy": float(accuracy_score(y, y_pred)),
+                "precision": float(precision_score(y, y_pred, average="macro")),
+                "recall": float(recall_score(y, y_pred, average="macro")),
+                "f1": float(f1_score(y, y_pred, average="macro")),
+            }
+
+            # Add user-provided metrics if any
+            if metrics:
+                for name, metric_func in metrics.items():
+                    metrics_dict[name] = float(metric_func(y, y_pred))
+
+            logger.debug("Evaluation metrics: %s", str(metrics_dict))
+            return metrics_dict
+        except Exception as e:
+            logger.exception("Error evaluating LogisticModel: %s", str(e))
+            raise DataError(f"Error evaluating: {str(e)}", data_shape=np.shape(X)) from e
 
     @property
     def coef_(self):
         """Get coefficients of the model."""
-        if not self.trained:
-            raise ValueError("Model must be trained first")
+        if not self.fitted:
+            logger.error("Attempted to access coefficients of untrained LogisticModel")
+            raise NotFittedError(
+                "Model must be trained before accessing coefficients",
+                model_type="LogisticModel",
+            )
         return self.model.coef_
 
     @property
     def intercept_(self):
         """Get intercept of the model."""
-        if not self.trained:
-            raise ValueError("Model must be trained first")
+        if not self.fitted:
+            logger.error("Attempted to access intercept of untrained LogisticModel")
+            raise NotFittedError(
+                "Model must be trained before accessing intercept",
+                model_type="LogisticModel",
+            )
         return self.model.intercept_
 
     @property
     def classes_(self):
         """Get class labels."""
-        if not self.trained:
-            raise ValueError("Model must be trained first")
+        if not self.fitted:
+            logger.error("Attempted to access classes of untrained LogisticModel")
+            raise NotFittedError(
+                "Model must be trained before accessing classes",
+                model_type="LogisticModel",
+            )
         return self.model.classes_

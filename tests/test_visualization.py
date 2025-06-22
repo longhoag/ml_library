@@ -1,46 +1,54 @@
-"""Tests for the visualization module."""
-import numpy as np
-import pytest
-from matplotlib.figure import Figure
-from sklearn.base import BaseEstimator, ClassifierMixin
+"""Test visualization functions."""
+import os
+import unittest
 
-from ml_library.visualization import plot_learning_curve
+from ml_library.visualization import plot_learning_curves
 
 
-class MockEstimator(BaseEstimator, ClassifierMixin):
-    """Mock scikit-learn estimator for testing visualization."""
+class TestVisualization(unittest.TestCase):
+    """Test cases for visualization functions."""
 
-    def __init__(self):
-        self.fitted = False
+    def setUp(self) -> None:
+        """Set up test cases.
 
-    def fit(self, X, y):
-        self.fitted = True
-        return self
+        Creates test data for learning curves.
+        """
+        self.train_scores = [0.8, 0.85, 0.9, 0.92, 0.95]
+        self.val_scores = [0.75, 0.8, 0.82, 0.85, 0.86]
+        self.test_output_dir = os.path.join(os.path.dirname(__file__), "test_output")
+        if not os.path.exists(self.test_output_dir):
+            os.makedirs(self.test_output_dir)
 
-    def predict(self, X):
-        return np.ones(len(X))
+    def test_plot_learning_curves(self) -> None:
+        """Test plotting of learning curves.
 
-    def score(self, X, y):
-        return 0.9
+        Verifies that learning curves can be plotted with different parameters.
+        """
+        plot_learning_curves(self.train_scores, self.val_scores, metric_name="Accuracy")
 
+    def test_plot_learning_curves_with_save(self) -> None:
+        """Test saving learning curves plot.
 
-def test_plot_learning_curve():
-    """Test plot_learning_curve generates a figure."""
-    X = np.array([[1, 2], [3, 4], [5, 6], [7, 8], [9, 10], [11, 12]])
-    y = np.array([0, 1, 0, 1, 0, 1])
-    model = MockEstimator()
+        Verifies that learning curves can be saved to a file.
+        """
+        save_path = os.path.join(self.test_output_dir, "learning_curves.png")
+        plot_learning_curves(
+            self.train_scores,
+            self.val_scores,
+            metric_name="Loss",
+            title="Training Progress",
+            save_path=save_path,
+        )
+        self.assertTrue(os.path.exists(save_path))
+        # Clean up
+        os.remove(save_path)
 
-    fig = plot_learning_curve(model, X, y, cv=3)
+    def tearDown(self) -> None:
+        """Clean up test outputs.
 
-    assert isinstance(fig, Figure)
-
-
-def test_plot_learning_curve_with_cross_validation():
-    """Test plot_learning_curve with different cv values."""
-    X = np.array([[1, 2], [3, 4], [5, 6], [7, 8], [9, 10], [11, 12]])
-    y = np.array([0, 1, 0, 1, 0, 1])
-    model = MockEstimator()
-
-    fig = plot_learning_curve(model, X, y, cv=2)
-
-    assert isinstance(fig, Figure)
+        Removes test output directory if it exists.
+        """
+        if os.path.exists(self.test_output_dir):
+            for file in os.listdir(self.test_output_dir):
+                os.remove(os.path.join(self.test_output_dir, file))
+            os.rmdir(self.test_output_dir)

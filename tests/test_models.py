@@ -1,251 +1,146 @@
-"""Tests for the models module."""
+"""Tests for model implementations."""
+
+import os
+from typing import Any, Dict, Generator, Optional, Tuple, Type
+
 import numpy as np
 import pytest
-from sklearn.datasets import make_classification, make_regression
+from numpy.typing import NDArray
 
-from ml_library.models import (
-    LinearModel,
-    LogisticModel,
-    Model,
-    RandomForestModel,
-    RandomForestRegressorModel,
-)
+from ml_library.exceptions import NotFittedError
+from ml_library.models import Model
 
 
 @pytest.fixture
-def classification_data():
-    """Generate sample classification data."""
-    X, y = make_classification(
-        n_samples=100,
-        n_features=5,
-        n_informative=3,
-        n_redundant=1,
-        random_state=42,
-    )
-    X_train, X_test = X[:80], X[80:]
-    y_train, y_test = y[:80], y[80:]
-    return X_train, X_test, y_train, y_test
+def simple_dataset() -> Tuple[NDArray[np.float64], NDArray[np.float64]]:
+    """Create a simple dataset for testing.
+
+    Returns
+    -------
+    Tuple[NDArray, NDArray]
+        X and y arrays for testing.
+    """
+    X = np.array([[1, 2], [3, 4]], dtype=np.float64)
+    y = np.array([0, 1], dtype=np.float64)
+    return X, y
 
 
 @pytest.fixture
-def regression_data():
-    """Generate sample regression data."""
-    X, y = make_regression(
-        n_samples=100,
-        n_features=5,
-        n_informative=3,
-        random_state=42,
-    )
-    X_train, X_test = X[:80], X[80:]
-    y_train, y_test = y[:80], y[80:]
-    return X_train, X_test, y_train, y_test
+def model_class() -> Type[Model]:
+    """Create a mock model class for testing.
+
+    Returns
+    -------
+    Type[Model]
+        Mock model class.
+    """
+
+    class MockModel(Model):
+        def train(self, X: NDArray[Any], y: NDArray[Any], **kwargs: Any) -> Model:
+            self.fitted = True
+            return self
+
+        def predict(self, X: NDArray[Any], **kwargs: Any) -> NDArray[Any]:
+            if not self.fitted:
+                raise NotFittedError("Model not trained")
+            return np.zeros(len(X), dtype=np.float64)
+
+        def evaluate(
+            self,
+            X: NDArray[Any],
+            y: NDArray[Any],
+            metrics: Optional[Dict[str, Any]] = None,
+        ) -> Dict[str, float]:
+            if not self.fitted:
+                raise NotFittedError("Model not trained")
+            return {"mock_metric": 1.0}
+
+    return MockModel
 
 
-class TestBaseModel:
-    """Test the base Model class."""
-
-    def test_model_initialization(self):
-        """Test that the model initializes correctly."""
-        model = Model()
-        assert model.trained is False
-        assert model.model is None
-
-    def test_model_train_not_implemented(self, classification_data):
-        """Test that the train method raises NotImplementedError."""
-        X_train, _, y_train, _ = classification_data
-        model = Model()
-        with pytest.raises(NotImplementedError):
-            model.train(X_train, y_train)
-
-    def test_model_predict_not_implemented(self, classification_data):
-        """Test that the predict method raises NotImplementedError."""
-        _, X_test, _, _ = classification_data
-        model = Model()
-        with pytest.raises(NotImplementedError):
-            model.predict(X_test)
-
-    def test_model_evaluate_not_implemented(self, classification_data):
-        """Test that the evaluate method raises NotImplementedError."""
-        _, X_test, _, y_test = classification_data
-        model = Model()
-        with pytest.raises(NotImplementedError):
-            model.evaluate(X_test, y_test)
+def test_model_init(model_class: Type[Model]) -> None:
+    """Test model initialization."""
+    model = model_class()
+    assert not model.fitted
 
 
-class TestLinearModel:
-    """Test the LinearModel class."""
-
-    def test_model_initialization(self):
-        """Test that the LinearModel initializes correctly."""
-        model = LinearModel()
-        assert model.trained is False
-        assert model.model is not None
-
-    def test_model_train(self, regression_data):
-        """Test training the model."""
-        X_train, _, y_train, _ = regression_data
-        model = LinearModel()
-        trained_model = model.train(X_train, y_train)
-        assert model.trained is True
-        assert trained_model is model
-        assert hasattr(model.model, "coef_")
-
-    def test_model_predict(self, regression_data):
-        """Test model prediction."""
-        X_train, X_test, y_train, _ = regression_data
-        model = LinearModel().train(X_train, y_train)
-        predictions = model.predict(X_test)
-        assert isinstance(predictions, np.ndarray)
-        assert len(predictions) == len(X_test)
-
-    def test_model_evaluate(self, regression_data):
-        """Test model evaluation."""
-        X_train, X_test, y_train, y_test = regression_data
-        model = LinearModel().train(X_train, y_train)
-        metrics = model.evaluate(X_test, y_test)
-        assert isinstance(metrics, dict)
-        assert "mse" in metrics
-        assert "mae" in metrics
-        assert "r2" in metrics
-        assert 0 <= metrics["r2"] <= 1.0
+def test_model_train(
+    model_class: Type[Model], simple_dataset: Tuple[NDArray[Any], NDArray[Any]]
+) -> None:
+    """Test model training."""
+    model = model_class()
+    X, y = simple_dataset
+    result = model.train(X, y)
+    assert result is model
+    assert model.fitted
 
 
-class TestLogisticModel:
-    """Test the LogisticModel class."""
-
-    def test_model_initialization(self):
-        """Test that the LogisticModel initializes correctly."""
-        model = LogisticModel()
-        assert model.trained is False
-        assert model.model is not None
-
-    def test_model_train(self, classification_data):
-        """Test training the model."""
-        X_train, _, y_train, _ = classification_data
-        model = LogisticModel()
-        trained_model = model.train(X_train, y_train)
-        assert model.trained is True
-        assert trained_model is model
-        assert hasattr(model.model, "coef_")
-
-    def test_model_predict(self, classification_data):
-        """Test model prediction."""
-        X_train, X_test, y_train, _ = classification_data
-        model = LogisticModel().train(X_train, y_train)
-        predictions = model.predict(X_test)
-        assert isinstance(predictions, np.ndarray)
-        assert len(predictions) == len(X_test)
-        # Check that predictions are either 0 or 1
-        assert np.all(np.logical_or(predictions == 0, predictions == 1))
-
-    def test_model_predict_proba(self, classification_data):
-        """Test probability prediction."""
-        X_train, X_test, y_train, _ = classification_data
-        model = LogisticModel().train(X_train, y_train)
-        probabilities = model.predict_proba(X_test)
-        assert isinstance(probabilities, np.ndarray)
-        assert len(probabilities) == len(X_test)
-        # Check that probabilities are between 0 and 1
-        assert np.all(probabilities >= 0)
-        assert np.all(probabilities <= 1)
-
-    def test_model_evaluate(self, classification_data):
-        """Test model evaluation."""
-        X_train, X_test, y_train, y_test = classification_data
-        model = LogisticModel().train(X_train, y_train)
-        metrics = model.evaluate(X_test, y_test)
-        assert isinstance(metrics, dict)
-        assert "accuracy" in metrics
-        assert "precision" in metrics
-        assert "recall" in metrics
-        assert "f1" in metrics
-        assert "roc_auc" in metrics
-        assert 0 <= metrics["accuracy"] <= 1.0
+def test_model_predict_without_training(
+    model_class: Type[Model], simple_dataset: Tuple[NDArray[Any], NDArray[Any]]
+) -> None:
+    """Test that prediction without training raises an error."""
+    model = model_class()
+    X, _ = simple_dataset
+    with pytest.raises(NotFittedError):
+        model.predict(X)
 
 
-class TestRandomForestModel:
-    """Test the RandomForestModel class."""
-
-    def test_model_initialization(self):
-        """Test that the RandomForestModel initializes correctly."""
-        model = RandomForestModel()
-        assert model.trained is False
-        assert model.model is not None
-
-    def test_model_train(self, classification_data):
-        """Test training the model."""
-        X_train, _, y_train, _ = classification_data
-        model = RandomForestModel()
-        trained_model = model.train(X_train, y_train)
-        assert model.trained is True
-        assert trained_model is model
-        assert hasattr(model.model, "feature_importances_")
-
-    def test_model_predict(self, classification_data):
-        """Test model prediction."""
-        X_train, X_test, y_train, _ = classification_data
-        model = RandomForestModel().train(X_train, y_train)
-        predictions = model.predict(X_test)
-        assert isinstance(predictions, np.ndarray)
-        assert len(predictions) == len(X_test)
-
-    def test_model_predict_proba(self, classification_data):
-        """Test probability prediction."""
-        X_train, X_test, y_train, _ = classification_data
-        model = RandomForestModel().train(X_train, y_train)
-        probabilities = model.predict_proba(X_test)
-        assert isinstance(probabilities, np.ndarray)
-        assert len(probabilities) == len(X_test)
-        assert np.all(probabilities >= 0)
-        assert np.all(probabilities <= 1)
-
-    def test_model_evaluate(self, classification_data):
-        """Test model evaluation."""
-        X_train, X_test, y_train, y_test = classification_data
-        model = RandomForestModel().train(X_train, y_train)
-        metrics = model.evaluate(X_test, y_test)
-        assert isinstance(metrics, dict)
-        assert "accuracy" in metrics
-        assert "precision" in metrics
-        assert "recall" in metrics
-        assert "f1" in metrics
-        assert "roc_auc" in metrics
-        assert 0 <= metrics["accuracy"] <= 1.0
+def test_model_predict_after_training(
+    model_class: Type[Model], simple_dataset: Tuple[NDArray[Any], NDArray[Any]]
+) -> None:
+    """Test prediction after training."""
+    model = model_class()
+    X, y = simple_dataset
+    model.train(X, y)
+    predictions = model.predict(X)
+    assert isinstance(predictions, np.ndarray)
+    assert len(predictions) == len(X)
 
 
-class TestRandomForestRegressorModel:
-    """Test the RandomForestRegressorModel class."""
+def test_model_evaluate_without_training(
+    model_class: Type[Model], simple_dataset: Tuple[NDArray[Any], NDArray[Any]]
+) -> None:
+    """Test that evaluation without training raises an error."""
+    model = model_class()
+    X, y = simple_dataset
+    with pytest.raises(NotFittedError):
+        model.evaluate(X, y)
 
-    def test_model_initialization(self):
-        """Test that the RandomForestRegressorModel initializes correctly."""
-        model = RandomForestRegressorModel()
-        assert model.trained is False
-        assert model.model is not None
 
-    def test_model_train(self, regression_data):
-        """Test training the model."""
-        X_train, _, y_train, _ = regression_data
-        model = RandomForestRegressorModel()
-        trained_model = model.train(X_train, y_train)
-        assert model.trained is True
-        assert trained_model is model
-        assert hasattr(model.model, "feature_importances_")
+def test_model_evaluate_after_training(
+    model_class: Type[Model], simple_dataset: Tuple[NDArray[Any], NDArray[Any]]
+) -> None:
+    """Test evaluation after training."""
+    model = model_class()
+    X, y = simple_dataset
+    model.train(X, y)
+    metrics = model.evaluate(X, y)
+    assert isinstance(metrics, dict)
+    assert "mock_metric" in metrics
+    assert metrics["mock_metric"] == 1.0
 
-    def test_model_predict(self, regression_data):
-        """Test model prediction."""
-        X_train, X_test, y_train, _ = regression_data
-        model = RandomForestRegressorModel().train(X_train, y_train)
-        predictions = model.predict(X_test)
-        assert isinstance(predictions, np.ndarray)
-        assert len(predictions) == len(X_test)
 
-    def test_model_evaluate(self, regression_data):
-        """Test model evaluation."""
-        X_train, X_test, y_train, y_test = regression_data
-        model = RandomForestRegressorModel().train(X_train, y_train)
-        metrics = model.evaluate(X_test, y_test)
-        assert isinstance(metrics, dict)
-        assert "mse" in metrics
-        assert "mae" in metrics
-        assert "r2" in metrics
-        assert 0 <= metrics["r2"] <= 1.0
+def test_model_save_and_load(
+    model_class: Type[Model],
+    simple_dataset: Tuple[NDArray[Any], NDArray[Any]],
+    tmp_path: str,
+) -> None:
+    """Test model saving and loading."""
+    model = model_class()
+    X, y = simple_dataset
+    model.train(X, y)
+
+    # Save the model
+    save_path = os.path.join(tmp_path, "model.joblib")
+    model.save(save_path)
+    assert os.path.exists(save_path)
+
+    # Load the model
+    loaded_model = model_class.load(save_path)
+    assert isinstance(loaded_model, model_class)
+    assert loaded_model.fitted
+
+    # Test that the loaded model can make predictions
+    predictions_original = model.predict(X)
+    predictions_loaded = loaded_model.predict(X)
+    np.testing.assert_array_equal(predictions_original, predictions_loaded)

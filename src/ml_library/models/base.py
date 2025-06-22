@@ -1,7 +1,10 @@
 """Base model implementation."""
 
-import pickle
-from abc import ABC, abstractmethod
+from typing import Any, Dict, Optional
+
+import joblib
+import numpy as np
+from numpy.typing import NDArray
 
 from ml_library.exceptions import NotFittedError
 from ml_library.logging import get_logger
@@ -12,144 +15,117 @@ __all__ = ["Model"]
 logger = get_logger(__name__)
 
 
-class Model(ABC):
-    """Abstract base class for all models.
+class Model:
+    """Base class for all models in the library.
 
-    This class defines the common interface that all models in the library
-    must implement.
-
-    All models must implement the following methods:
-    - train: Train the model on data
-    - predict: Make predictions using the trained model
-    - evaluate: Evaluate the model performance on test data
-
-    Models can optionally implement:
-    - save: Save the model to disk
-    - load: Load a model from disk
+    This class defines the common interface that all ML models should implement.
+    Subclasses should implement train(), predict(), and evaluate() methods.
     """
 
-    def __init__(self):
-        """Initialize a new model."""
-        self.trained = False
-        logger.debug("Initialized %s model", self.__class__.__name__)
+    def __init__(self) -> None:
+        """Initialize a new model instance."""
+        self.fitted = False
+        self.logger = logger
 
-    @abstractmethod
-    def train(self, X, y):
-        """Train the model on the provided data.
+    def train(self, X: NDArray[Any], y: NDArray[Any], **kwargs: Any) -> "Model":
+        """Train the model.
 
-        Parameters
-        ----------
-        X : array-like of shape (n_samples, n_features)
-            Training data.
-        y : array-like of shape (n_samples,)
-            Target values.
+        Args:
+            X: Training data.
+            y: Target values.
+            **kwargs: Additional training parameters.
 
-        Returns
-        -------
-        self : Model
-            The trained model.
+        Returns:
+            self: The trained model instance.
+
+        Raises:
+            NotImplementedError: If not implemented by subclass.
         """
+        raise NotImplementedError(
+            f"train() not implemented in {self.__class__.__name__}"
+        )
 
-    @abstractmethod
-    def predict(self, X):
-        """Make predictions using the trained model.
+    def predict(self, X: NDArray[Any], **kwargs: Any) -> NDArray[Any]:
+        """Make predictions for input data.
 
-        Parameters
-        ----------
-        X : array-like of shape (n_samples, n_features)
-            Data to make predictions on.
+        Args:
+            X: Input data.
+            **kwargs: Additional prediction parameters.
 
-        Returns
-        -------
-        y_pred : array-like of shape (n_samples,)
+        Returns:
             Predicted values.
+
+        Raises:
+            NotFittedError: If model is not trained.
+            NotImplementedError: If not implemented by subclass.
         """
+        if not self.fitted:
+            raise NotFittedError(
+                f"This {self.__class__.__name__} instance is not fitted yet. "
+                "Call 'train()' with appropriate arguments before using this model."
+            )
 
-    @abstractmethod
-    def evaluate(self, X, y):
-        """Evaluate model performance on test data.
+        raise NotImplementedError(
+            f"predict() not implemented in {self.__class__.__name__}"
+        )
 
-        Parameters
-        ----------
-        X : array-like of shape (n_samples, n_features)
-            Test data.
-        y : array-like of shape (n_samples,)
-            True target values.
+    def evaluate(
+        self, X: NDArray[Any], y: NDArray[Any], metrics: Optional[Dict[str, Any]] = None
+    ) -> Dict[str, float]:
+        """Evaluate model performance.
 
-        Returns
-        -------
-        score : float
-            Performance score.
+        Args:
+            X: Input data.
+            y: True labels/values.
+            metrics: Dictionary of metric functions.
+
+        Returns:
+            Dictionary with metric names and values.
+
+        Raises:
+            NotFittedError: If model is not trained.
         """
+        if not self.fitted:
+            raise NotFittedError(
+                f"This {self.__class__.__name__} instance is not fitted yet. "
+                "Call 'train()' with appropriate arguments before evaluating."
+            )
 
-    def save(self, path):
-        """Save the model to disk.
-        
-        Parameters
-        ----------
-        path : str
-            Path to save the model to.
-            
-        Returns
-        -------
-        self : Model
-            The model instance.
-            
-        Raises
-        ------
-        NotFittedError
-            If the model has not been trained.
-        IOError
-            If there is an issue with file I/O.
+        # By default, return empty metrics
+        return {}
+
+    def save(self, filepath: str) -> "Model":
+        """Save the model to a file.
+
+        Args:
+            filepath: Path where to save the model.
+
+        Returns:
+            self: The model instance for chaining.
+
+        Raises:
+            NotFittedError: If the model is not fitted.
         """
-        if not self.trained:
-            logger.error("Attempted to save untrained %s model", self.__class__.__name__)
-            raise NotFittedError("Cannot save untrained model", model_type=self.__class__.__name__)
-        
-        try:
-            logger.info("Saving %s model to %s", self.__class__.__name__, path)
-            with open(path, "wb") as f:
-                pickle.dump(self, f)
-            logger.debug("Successfully saved model to %s", path)
-        except IOError:
-            logger.exception("Failed to save %s model to %s", self.__class__.__name__, path)
-            raise
-            
+        if not self.fitted:
+            raise NotFittedError("Cannot save model that has not been trained")
+
+        joblib.dump(self, filepath)
         return self
 
     @classmethod
-    def load(cls, path):
-        """Load a saved model from disk.
+    def load(cls, filepath: str) -> "Model":
+        """Load a model from a file.
 
-        Parameters
-        ----------
-        path : str
-            Path to load the model from.
+        Args:
+            filepath: Path to the saved model file.
 
-        Returns
-        -------
-        model : Model
-            The loaded model.
-            
-        Raises
-        ------
-        IOError
-            If there is an issue with file I/O.
-        ValueError
-            If the loaded object is not of the correct type.
+        Returns:
+            Model: The loaded model instance.
+
+        Raises:
+            ValueError: If the loaded object is not an instance of the calling class.
         """
-        try:
-            logger.info("Loading model from %s", path)
-            with open(path, "rb") as f:
-                model = pickle.load(f)
-                
-            if not isinstance(model, cls):
-                logger.error("Loaded object is not a %s instance", cls.__name__)
-                raise ValueError(f"Loaded object is not a {cls.__name__} instance")
-                
-            logger.debug("Successfully loaded %s from %s", model.__class__.__name__, path)
-            return model
-            
-        except IOError:
-            logger.exception("Failed to load model from %s", path)
-            raise
+        model = joblib.load(filepath)
+        if not isinstance(model, cls):
+            raise ValueError(f"Loaded object is not an instance of {cls.__name__}")
+        return model
