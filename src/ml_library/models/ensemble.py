@@ -1,8 +1,11 @@
 """Ensemble model implementations."""
 
+from typing import List, Optional
+
 import numpy as np
 from sklearn.ensemble import RandomForestClassifier, RandomForestRegressor
 from sklearn.metrics import accuracy_score, r2_score
+from typing_extensions import Self
 
 from ml_library.models import Model
 
@@ -22,17 +25,21 @@ class RandomForestModel(Model):
         Random state for reproducibility.
     """
 
-    def __init__(self, n_estimators=100, max_depth=None, random_state=None):
+    def __init__(
+        self, n_estimators: int = 100, max_depth: Optional[int] = None, random_state: Optional[int] = None
+    ) -> None:
         """Initialize the Random Forest classifier model."""
         super().__init__()
         self.n_estimators = n_estimators
         self.max_depth = max_depth
         self.random_state = random_state
         self.model = RandomForestClassifier(
-            n_estimators=n_estimators, max_depth=max_depth, random_state=random_state
+            n_estimators=n_estimators, 
+            max_depth=max_depth, 
+            random_state=random_state
         )
 
-    def train(self, X, y):
+    def train(self, X: np.ndarray, y: np.ndarray) -> Self:
         """Train the random forest model.
 
         Parameters
@@ -51,7 +58,7 @@ class RandomForestModel(Model):
         self.trained = True
         return self
 
-    def predict(self, X):
+    def predict(self, X: np.ndarray) -> np.ndarray:
         """Make predictions using the random forest model.
 
         Parameters
@@ -68,7 +75,7 @@ class RandomForestModel(Model):
             raise ValueError("Model must be trained before prediction")
         return self.model.predict(X)
 
-    def predict_proba(self, X):
+    def predict_proba(self, X: np.ndarray) -> np.ndarray:
         """Predict class probabilities.
 
         Parameters
@@ -85,7 +92,7 @@ class RandomForestModel(Model):
             raise ValueError("Model must be trained before prediction")
         return self.model.predict_proba(X)
 
-    def evaluate(self, X, y):
+    def evaluate(self, X: np.ndarray, y: np.ndarray) -> float:
         """Evaluate the random forest model.
 
         Parameters
@@ -106,14 +113,14 @@ class RandomForestModel(Model):
         return accuracy_score(y, y_pred)
 
     @property
-    def feature_importances_(self):
+    def feature_importances_(self) -> np.ndarray:
         """Get feature importances."""
         if not self.trained:
             raise ValueError("Model must be trained first")
         return self.model.feature_importances_
-
+        
     @property
-    def classes_(self):
+    def classes_(self) -> np.ndarray:
         """Get class labels."""
         if not self.trained:
             raise ValueError("Model must be trained first")
@@ -133,17 +140,21 @@ class RandomForestRegressorModel(Model):
         Random state for reproducibility.
     """
 
-    def __init__(self, n_estimators=100, max_depth=None, random_state=None):
+    def __init__(
+        self, n_estimators: int = 100, max_depth: Optional[int] = None, random_state: Optional[int] = None
+    ) -> None:
         """Initialize the Random Forest regressor model."""
         super().__init__()
         self.n_estimators = n_estimators
         self.max_depth = max_depth
         self.random_state = random_state
         self.model = RandomForestRegressor(
-            n_estimators=n_estimators, max_depth=max_depth, random_state=random_state
+            n_estimators=n_estimators, 
+            max_depth=max_depth, 
+            random_state=random_state
         )
 
-    def train(self, X, y):
+    def train(self, X: np.ndarray, y: np.ndarray) -> Self:
         """Train the random forest regressor model.
 
         Parameters
@@ -162,7 +173,7 @@ class RandomForestRegressorModel(Model):
         self.trained = True
         return self
 
-    def predict(self, X):
+    def predict(self, X: np.ndarray) -> np.ndarray:
         """Make predictions using the random forest regressor model.
 
         Parameters
@@ -179,7 +190,7 @@ class RandomForestRegressorModel(Model):
             raise ValueError("Model must be trained before prediction")
         return self.model.predict(X)
 
-    def evaluate(self, X, y):
+    def evaluate(self, X: np.ndarray, y: np.ndarray) -> float:
         """Evaluate the random forest regressor model.
 
         Parameters
@@ -192,7 +203,7 @@ class RandomForestRegressorModel(Model):
         Returns
         -------
         score : float
-            R² score.
+            R2 score.
         """
         if not self.trained:
             raise ValueError("Model must be trained before evaluation")
@@ -200,7 +211,7 @@ class RandomForestRegressorModel(Model):
         return r2_score(y, y_pred)
 
     @property
-    def feature_importances_(self):
+    def feature_importances_(self) -> np.ndarray:
         """Get feature importances."""
         if not self.trained:
             raise ValueError("Model must be trained first")

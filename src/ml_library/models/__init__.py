@@ -1,6 +1,15 @@
 """Model definitions and utilities."""
 
+# Import specific model implementations - these need to be imported here
+# for proper package structure but will be imported at the bottom
+# to avoid circular imports
+from typing import ClassVar, Optional, TypeVar, Union, cast
+
 import joblib
+import numpy as np  # noqa: F401
+from typing_extensions import Self
+
+T = TypeVar("T", bound="Model")
 
 __all__ = [
     "Model",
@@ -14,12 +23,12 @@ __all__ = [
 class Model:
     """Base class for all models."""
 
-    def __init__(self):
+    def __init__(self) -> None:
         """Initialize the model."""
         self.trained = False
-        self.model = None
+        self.model: Optional[object] = None
 
-    def train(self, X, y):
+    def train(self, X: np.ndarray, y: np.ndarray) -> Self:
         """Train the model.
 
         Parameters
@@ -38,7 +47,7 @@ class Model:
         self.trained = True
         return self
 
-    def predict(self, X):
+    def predict(self, X: np.ndarray) -> np.ndarray:
         """Make predictions.
 
         Parameters
@@ -54,9 +63,9 @@ class Model:
         if not self.trained:
             raise ValueError("Model must be trained before prediction")
         # Implementation will be provided in subclasses
-        return None
+        return np.array([])
 
-    def evaluate(self, X, y):
+    def evaluate(self, X: np.ndarray, y: np.ndarray) -> float:
         """Evaluate the model.
 
         Parameters
@@ -76,7 +85,7 @@ class Model:
         # Implementation will be provided in subclasses
         return 0.0
 
-    def save(self, filepath):
+    def save(self, filepath: str) -> None:
         """Save the model to a file.
 
         Parameters
@@ -89,7 +98,7 @@ class Model:
         joblib.dump(self, filepath)
 
     @classmethod
-    def load(cls, filepath):
+    def load(cls: ClassVar[T], filepath: str) -> T:
         """Load a model from a file.
 
         Parameters
@@ -102,10 +111,10 @@ class Model:
         model : Model
             The loaded model.
         """
-        return joblib.load(filepath)
+        return cast(T, joblib.load(filepath))
 
 
 from ml_library.models.ensemble import RandomForestModel, RandomForestRegressorModel
 
-# Import specific model implementations
+# Import specific implementations at the end to avoid circular imports
 from ml_library.models.linear import LinearModel, LogisticModel

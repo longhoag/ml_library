@@ -6,7 +6,7 @@ from sklearn.datasets import load_breast_cancer
 
 from ml_library import (
     LogisticModel,
-    RandomForestModel,
+    RandomForestClassifier,
     StandardPreprocessor,
     accuracy,
     f1,
