@@ -94,7 +94,7 @@ def test_error_handling():
 
 
 def main():
-    """Main function to test logging."""
+    """Run the logging tests."""
     parser = argparse.ArgumentParser(description="Test ML Library logging")
     parser.add_argument(
         "--level",

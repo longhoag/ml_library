@@ -56,7 +56,7 @@ class Preprocessor:
             This method should be implemented by subclasses.
         """
         raise NotImplementedError(
-            f"transform() not implemented in {self.__class__.__name__}"
+            f"transform() not implemented for {self.__class__.__name__}"
         )
 
     def fit_transform(

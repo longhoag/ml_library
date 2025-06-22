@@ -11,7 +11,7 @@ from ml_library.utils import check_data, cross_validate
 class SimpleMockModel(BaseEstimator):
     """Simple mock model for testing cross_validate."""
 
-    def __init__(self):
+    def __init__(self) -> None:
         self.fitted = False
         self.train_count = 0
         self.eval_count = 0

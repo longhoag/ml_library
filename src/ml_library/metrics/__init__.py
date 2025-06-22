@@ -211,16 +211,12 @@ def roc_auc(y_true: NDArray[np.float64], y_score: NDArray[np.float64]) -> float:
     fpr = np.concatenate(([0], fpr, [1]))
 
     # Calculate AUC using trapezoidal rule
-    # Use trapezoid instead of trapz (which is deprecated)
+    # Use trapezoid if available (newer numpy versions)
     if hasattr(np, "trapezoid"):
         return float(np.trapezoid(tpr, fpr))
     else:
-        # Fallback to trapz for older numpy versions
-        try:
-            return float(np.trapz(tpr, fpr))
-        except AttributeError:
-            # If numpy doesn't have trapz, use manual calculation
-            # This is a simple implementation of the trapezoidal rule
-            width = fpr[1:] - fpr[:-1]
-            heights = (tpr[1:] + tpr[:-1]) / 2
-            return float(np.sum(width * heights))
+        # Manual calculation using trapezoidal rule for older numpy versions
+        # This is a simple implementation of the trapezoidal rule
+        width = fpr[1:] - fpr[:-1]
+        heights = (tpr[1:] + tpr[:-1]) / 2
+        return float(np.sum(width * heights))

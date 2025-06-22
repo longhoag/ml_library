@@ -41,7 +41,7 @@ class Model:
             NotImplementedError: If not implemented by subclass.
         """
         raise NotImplementedError(
-            f"train() not implemented in {self.__class__.__name__}"
+            f"train() not implemented for {self.__class__.__name__}"
         )
 
     def predict(self, X: NDArray[Any], **kwargs: Any) -> NDArray[Any]:
@@ -65,7 +65,7 @@ class Model:
             )
 
         raise NotImplementedError(
-            f"predict() not implemented in {self.__class__.__name__}"
+            f"predict() not implemented for {self.__class__.__name__}"
         )
 
     def evaluate(

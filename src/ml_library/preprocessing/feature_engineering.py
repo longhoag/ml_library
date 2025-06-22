@@ -210,6 +210,6 @@ class FeatureSelector(Preprocessor):
         if self.feature_indices is None:
             raise PreprocessingError("Feature indices not computed")
 
-        mask = np.zeros(self._n_features, dtype=bool)
+        mask: np.ndarray = np.zeros(self._n_features, dtype=bool)
         mask[self.feature_indices] = True
         return mask
