@@ -56,6 +56,17 @@ make html
 
 The documentation will be available in the `docs/build/html/` directory.
 
+### Documentation Structure
+
+- **Introduction**: Overview of the library and its features
+- **Installation**: Detailed installation instructions
+- **Quickstart**: Quick examples to get started
+- **Tutorials**: In-depth tutorials for various use cases
+- **API Reference**: Detailed documentation of all modules, classes, and functions
+- **Examples**: Complete working examples
+- **Contributing**: Guidelines for contributing to the library
+- **Changelog**: Version history and changes
+
 ## Testing
 
 The library has a comprehensive test suite using pytest. To run the tests:
