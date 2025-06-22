@@ -1,0 +1,13 @@
+name: Test Workflow
+
+on:
+  # This is just a minimal test workflow
+  workflow_dispatch:
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v3
+    - name: Test Step
+      run: echo "Token has workflow permissions!"
