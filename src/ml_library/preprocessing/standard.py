@@ -84,7 +84,8 @@ class StandardScaler:
         if self.mean_ is None or self.scale_ is None:
             raise PreprocessingError("Scaler is not properly fitted.")
 
-        return (X - self.mean_) / self.scale_
+        result = (X - self.mean_) / self.scale_
+        return np.asarray(result)
 
     def fit_transform(
         self, X: NDArray[Any], y: Optional[NDArray[Any]] = None
@@ -298,7 +299,8 @@ class MinMaxScaler:
         if self.scale_ is None or self.min_ is None:
             raise PreprocessingError("Scaler is not properly fitted.")
 
-        return X * self.scale_ + self.min_
+        result = X * self.scale_ + self.min_
+        return np.asarray(result)
 
     def fit_transform(
         self, X: NDArray[Any], y: Optional[NDArray[Any]] = None
