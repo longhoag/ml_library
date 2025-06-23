@@ -30,7 +30,7 @@ jobs:
         poetry install
     - name: Lint with flake8
       run: |
-        poetry run flake8 src tests --ignore=E501,W503 --max-line-length=88
+        poetry run flake8 src tests
     - name: Type check with mypy
       run: |
         poetry run mypy src
