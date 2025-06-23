@@ -85,18 +85,23 @@ def main() -> None:
     plt.yticks(range(10), [feature_names[i] for i in indices])
     plt.xlabel("Relative Importance")
     plt.tight_layout()
-    plt.savefig("feature_importances.png")
+
+    # Create assets directory if it doesn't exist
+    import os
+
+    os.makedirs("../assets", exist_ok=True)
+    plt.savefig("../assets/feature_importances.png")
 
     # Plot learning curve for random forest
     plt.figure(figsize=(10, 6))
     lc_plot = plot_learning_curve(rf_model, X, y, cv=5)
-    lc_plot.savefig("learning_curve.png")
+    lc_plot.savefig("../assets/learning_curve.png")
 
     # Save the best model
     rf_model.save("breast_cancer_model.pkl")
     print("\nModel saved to breast_cancer_model.pkl")
-    print("Feature importance plot saved to feature_importances.png")
-    print("Learning curve plot saved to learning_curve.png")
+    print("Feature importance plot saved to ../assets/feature_importances.png")
+    print("Learning curve plot saved to ../assets/learning_curve.png")
 
 
 if __name__ == "__main__":

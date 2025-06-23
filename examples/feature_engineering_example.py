@@ -94,7 +94,12 @@ def main() -> None:
     plt.ylabel("Score")
     plt.title("Feature Importance Scores")
     plt.tight_layout()
-    plt.savefig("feature_selection_scores.png")
+
+    # Create assets directory if it doesn't exist
+    import os
+
+    os.makedirs("../assets", exist_ok=True)
+    plt.savefig("../assets/feature_selection_scores.png")
 
     # ----------------------------------------------------------
     # Approach 3: Polynomial features
@@ -159,9 +164,9 @@ def main() -> None:
     plt.ylabel("Predictions")
 
     plt.tight_layout()
-    plt.savefig("feature_engineering_comparison.png")
-    print("Comparison plot saved to feature_engineering_comparison.png")
-    print("Feature selection scores saved to feature_selection_scores.png")
+    plt.savefig("../assets/feature_engineering_comparison.png")
+    print("Comparison plot saved to ../assets/feature_engineering_comparison.png")
+    print("Feature selection scores saved to ../assets/feature_selection_scores.png")
 
 
 if __name__ == "__main__":

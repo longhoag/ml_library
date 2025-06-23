@@ -18,21 +18,17 @@ This library provides a comprehensive set of tools for machine learning workflow
 
 ## Installation
 
-### Using pip
-
 ```bash
-pip install ml-library
-```
-
-### Using Poetry
-
-```bash
+# Install the package
 poetry add ml-library
+
+# Alternative using pip
+pip install ml-library
 ```
 
 ### Development Installation
 
-Clone the repository and install with poetry:
+Clone the repository and install with Poetry:
 
 ```bash
 git clone https://github.com/longhoag/ml_library.git
@@ -222,10 +218,10 @@ except Exception as e:
 - **Production Ready**: Designed for use in production environments with proper error recovery
 
 # Run tests with coverage report
-python -m pytest --cov=ml_library
+poetry run pytest --cov=ml_library
 
 # Generate HTML coverage report
-python -m pytest --cov=ml_library --cov-report=html
+poetry run pytest --cov=ml_library --cov-report=html
 ```
 
 For more details on testing, see [tests/README.md](tests/README.md).
@@ -247,6 +243,10 @@ The library is distributed as a Python package via PyPI. For detailed instructio
 To install the latest development version directly from the repository:
 
 ```bash
+# Using Poetry
+poetry add git+https://github.com/longhoag/ml_library.git
+
+# Using pip
 pip install git+https://github.com/longhoag/ml_library.git
 ```
 

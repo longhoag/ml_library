@@ -82,7 +82,12 @@ def main() -> None:
     plt.yticks(range(len(indices)), [feature_names[i] for i in indices])
     plt.xlabel("Relative Importance")
     plt.tight_layout()
-    plt.savefig("regression_feature_importances.png")
+
+    # Create assets directory if it doesn't exist
+    import os
+
+    os.makedirs("../assets", exist_ok=True)
+    plt.savefig("../assets/regression_feature_importances.png")
 
     # Plot predictions vs actual
     plt.figure(figsize=(10, 6))
@@ -92,19 +97,21 @@ def main() -> None:
     plt.ylabel("Predicted Values")
     plt.title("Predicted vs Actual Values")
     plt.tight_layout()
-    plt.savefig("regression_predictions.png")
+    plt.savefig("../assets/regression_predictions.png")
 
     # Plot learning curve
     plt.figure(figsize=(10, 6))
     lc_plot = plot_learning_curve(rf_model, X, y, cv=5)
-    lc_plot.savefig("regression_learning_curve.png")
+    lc_plot.savefig("../assets/regression_learning_curve.png")
 
     # Save the best model
     rf_model.save("diabetes_model.pkl")
     print("\nModel saved to diabetes_model.pkl")
-    print("Feature importance plot saved to regression_feature_importances.png")
-    print("Predictions plot saved to regression_predictions.png")
-    print("Learning curve plot saved to regression_learning_curve.png")
+    print(
+        "Feature importance plot saved to ../assets/regression_feature_importances.png"
+    )
+    print("Predictions plot saved to ../assets/regression_predictions.png")
+    print("Learning curve plot saved to ../assets/regression_learning_curve.png")
 
 
 if __name__ == "__main__":
