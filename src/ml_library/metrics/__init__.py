@@ -15,7 +15,10 @@ __all__ = [
 ]
 
 
-def accuracy(y_true: NDArray[np.float64], y_pred: NDArray[np.float64]) -> float:
+def accuracy(
+    y_true: NDArray[np.float64],
+    y_pred: NDArray[np.float64],
+) -> float:
     """Calculate accuracy score.
 
     Parameters
@@ -34,7 +37,9 @@ def accuracy(y_true: NDArray[np.float64], y_pred: NDArray[np.float64]) -> float:
 
 
 def precision(
-    y_true: NDArray[np.float64], y_pred: NDArray[np.float64], zero_division: float = 0.0
+    y_true: NDArray[np.float64],
+    y_pred: NDArray[np.float64],
+    zero_division: float = 0.0,
 ) -> float:
     """Calculate precision score.
 
@@ -62,7 +67,9 @@ def precision(
 
 
 def recall(
-    y_true: NDArray[np.float64], y_pred: NDArray[np.float64], zero_division: float = 0.0
+    y_true: NDArray[np.float64],
+    y_pred: NDArray[np.float64],
+    zero_division: float = 0.0,
 ) -> float:
     """Calculate recall score.
 
@@ -90,7 +97,9 @@ def recall(
 
 
 def f1(
-    y_true: NDArray[np.float64], y_pred: NDArray[np.float64], zero_division: float = 0.0
+    y_true: NDArray[np.float64],
+    y_pred: NDArray[np.float64],
+    zero_division: float = 0.0,
 ) -> float:
     """Calculate F1 score.
 
@@ -177,7 +186,10 @@ def r2(y_true: NDArray[np.float64], y_pred: NDArray[np.float64]) -> float:
     return float(1 - (ss_residual / ss_total))
 
 
-def roc_auc(y_true: NDArray[np.float64], y_score: NDArray[np.float64]) -> float:
+def roc_auc(
+    y_true: NDArray[np.float64],
+    y_score: NDArray[np.float64],
+) -> float:
     """Calculate ROC AUC score.
 
     Parameters
