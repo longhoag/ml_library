@@ -1,5 +1,5 @@
 #!/bin/bash
-# Script to build and publish the package to PyPI
+# Script to build and publish the package to PyPI using Poetry
 
 set -e
 
@@ -11,20 +11,25 @@ if [ "$1" != "--production" ] && [ "$1" != "--test" ]; then
   exit 1
 fi
 
+# Check Poetry installation
+if ! command -v poetry &> /dev/null; then
+  echo "Poetry not found. Please install Poetry first with: pip install poetry"
+  exit 1
+fi
+
 # Clean previous builds
 echo "Cleaning previous builds..."
-rm -rf build/ dist/ *.egg-info/
+rm -rf dist/
 
-# Build the package
+# Build the package with poetry
 echo "Building package..."
-python -m pip install --upgrade build
-python -m build
+poetry build
 
 # Upload to PyPI
 if [ "$1" == "--test" ]; then
   echo "Uploading to Test PyPI..."
-  python -m pip install --upgrade twine
-  python -m twine upload --repository testpypi dist/*
+  poetry config repositories.testpypi https://test.pypi.org/legacy/
+  poetry publish -r testpypi
 elif [ "$1" == "--production" ]; then
   echo "Are you sure you want to upload to Production PyPI? (y/n)"
   read -r confirmation
@@ -34,8 +39,7 @@ elif [ "$1" == "--production" ]; then
   fi
 
   echo "Uploading to Production PyPI..."
-  python -m pip install --upgrade twine
-  python -m twine upload dist/*
+  poetry publish
 fi
 
 echo "Done!"

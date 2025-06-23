@@ -18,8 +18,39 @@ This library provides a comprehensive set of tools for machine learning workflow
 
 ## Installation
 
+### Using pip
+
 ```bash
 pip install ml-library
+```
+
+### Using Poetry
+
+```bash
+poetry add ml-library
+```
+
+### Development Installation
+
+Clone the repository and install with poetry:
+
+```bash
+git clone https://github.com/longhoag/ml_library.git
+cd ml_library
+poetry install
+```
+
+To install with optional dependencies:
+
+```bash
+# Install with TensorFlow support
+poetry install -E tensorflow
+
+# Install with PyTorch support
+poetry install -E torch
+
+# Install with all extras
+poetry install -E tensorflow -E torch
 ```
 
 ## Quick Start
@@ -221,7 +252,9 @@ pip install git+https://github.com/longhoag/ml_library.git
 
 ## Contributing
 
-Contributions are welcome! Please check our contribution guidelines before submitting a pull request.
+Contributions are welcome! Please check our [contribution guidelines](CONTRIBUTING.md) before submitting a pull request.
+
+We now use [Poetry](https://python-poetry.org/) for package management. See the [CONTRIBUTING.md](CONTRIBUTING.md) file for development setup instructions.
 
 ## License
 

@@ -20,11 +20,14 @@ cat > src/ml_library/_version.py << EOF
 __version__ = "$NEW_VERSION"
 EOF
 
-# Update setup.py if needed
-echo "Checking setup.py version..."
-if grep -q "version='[0-9]*\.[0-9]*\.[0-9]*'" setup.py; then
-  echo "Updating version in setup.py"
-  sed -i '' "s/version='[0-9]*\.[0-9]*\.[0-9]*'/version='$NEW_VERSION'/g" setup.py
+# Update version in pyproject.toml
+echo "Updating version in pyproject.toml"
+# Using poetry version command if poetry is installed
+if command -v poetry &> /dev/null; then
+  poetry version $NEW_VERSION
+else
+  # Fallback to sed if poetry is not installed
+  sed -i '' "s/^version = \"[0-9]*\.[0-9]*\.[0-9]*\"/version = \"$NEW_VERSION\"/g" pyproject.toml
 fi
 
 # Update CHANGELOG.md
