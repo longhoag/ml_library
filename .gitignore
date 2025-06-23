@@ -87,3 +87,8 @@ logs/
 # Environment variables
 .env
 .env.*
+
+# Internal documentation
+POETRY_MIGRATION.md
+POETRY_SUMMARY.md
+*TOKEN_INSTRUCTIONS.md

@@ -115,6 +115,16 @@ To build and publish the package:
 4. Update documentation if necessary
 5. Submit a pull request
 
+## Documentation
+
+The following documentation files are available:
+
+- **README.md**: Main project documentation and overview
+- **CHANGELOG.md**: Version history and changes
+- **CONTRIBUTING.md**: This file, containing contribution guidelines
+- **DISTRIBUTION.md**: Information about building and distributing the package
+- **GIT_WORKFLOW.md**: Git workflow guidelines for the project
+
 ## License
 
 This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
