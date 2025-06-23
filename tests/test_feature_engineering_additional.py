@@ -1,6 +1,6 @@
 """Additional tests for feature engineering module to improve coverage."""
 
-from typing import Optional
+from typing import Any, Optional
 
 import numpy as np
 import pytest
@@ -105,7 +105,7 @@ class TestPolynomialPreprocessorEdgeCases:
         # Use monkey patching to simulate a problematic transformer
         from types import MethodType
 
-        def mock_fit(self, X: np.ndarray, y: Optional[np.ndarray] = None) -> None:
+        def mock_fit(self: Any, X: np.ndarray, y: Optional[np.ndarray] = None) -> None:
             raise ValueError("Simulated fit error")
 
         # Apply mock to transformer
@@ -126,7 +126,7 @@ class TestPolynomialPreprocessorEdgeCases:
         # Use monkey patching to simulate a problematic transformer
         from types import MethodType
 
-        def mock_transform(self, X: np.ndarray) -> None:
+        def mock_transform(self: Any, X: np.ndarray) -> None:
             raise ValueError("Simulated transform error")
 
         # Apply mock to transformer

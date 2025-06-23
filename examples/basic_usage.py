@@ -4,7 +4,7 @@
 from sklearn.datasets import make_classification
 from sklearn.model_selection import train_test_split
 
-from ml_library import Model, Preprocessor
+from ml_library import LogisticModel, StandardPreprocessor
 
 
 def main() -> None:
@@ -20,26 +20,26 @@ def main() -> None:
     )
 
     # Preprocess the data
-    preprocessor = Preprocessor()
-    X_train_processed = preprocessor.fit_transform(X_train, y_train)
+    preprocessor = StandardPreprocessor()
+    X_train_processed = preprocessor.fit_transform(X_train)
     X_test_processed = preprocessor.transform(X_test)
 
     # Train the model
-    model = Model()
+    model = LogisticModel()
     model.train(X_train_processed, y_train)
 
     # Evaluate the model
-    score = model.evaluate(X_test_processed, y_test)
-    print(f"Model accuracy: {score: .4f}")
+    metrics = model.evaluate(X_test_processed, y_test)
+    print(f"Model accuracy: {metrics['accuracy']:.4f}")
 
     # Save the model
     model.save("model.pkl")
     print("Model saved to model.pkl")
 
     # Load the model
-    loaded_model = Model.load("model.pkl")
-    loaded_score = loaded_model.evaluate(X_test_processed, y_test)
-    print(f"Loaded model accuracy: {loaded_score: .4f}")
+    loaded_model = LogisticModel.load("model.pkl")
+    loaded_metrics = loaded_model.evaluate(X_test_processed, y_test)
+    print(f"Loaded model accuracy: {loaded_metrics['accuracy']:.4f}")
 
 
 if __name__ == "__main__":

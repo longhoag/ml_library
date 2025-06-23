@@ -7,16 +7,20 @@ set -e
 # Change to project root directory
 cd "$(dirname "$0")"
 
-# Check for Sphinx
-if ! command -v sphinx-build &> /dev/null; then
-    echo "Sphinx not found. Installing dependencies..."
-    pip install -r requirements-dev.txt
+# Check for Poetry
+if ! command -v poetry &> /dev/null; then
+    echo "Poetry not found. Please install Poetry first: https://python-poetry.org/docs/#installation"
+    exit 1
 fi
+
+# Ensure dev dependencies are installed (including Sphinx)
+echo "Ensuring dependencies are installed..."
+poetry install --with dev
 
 # Build the documentation
 echo "Building documentation..."
 cd docs
-make html
+poetry run make html
 
 # Open the documentation in the browser (macOS specific)
 echo "Documentation built successfully!"

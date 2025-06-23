@@ -12,11 +12,12 @@ class SimpleMockModel(BaseEstimator):
     """Simple mock model for testing cross_validate."""
 
     def __init__(self) -> None:
+        """Initialize SimpleMockModel."""
         self.fitted = False
         self.train_count = 0
         self.eval_count = 0
 
-    def fit(self, X: np.ndarray, y: np.ndarray) -> 'SimpleMockModel':
+    def fit(self, X: np.ndarray, y: np.ndarray) -> "SimpleMockModel":
         """Mock fit method."""
         self.fitted = True
         self.train_count += 1

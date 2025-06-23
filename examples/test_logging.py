@@ -1,6 +1,7 @@
 """Utility script to test logging configuration."""
 
 import argparse
+from typing import Optional
 
 import numpy as np
 
@@ -18,7 +19,7 @@ from ml_library.models import LinearModel
 logger = get_logger(__name__)
 
 
-def test_logging(level="info", log_file=None) -> None:
+def test_logging(level: str = "info", log_file: Optional[str] = None) -> None:
     """Test logging functionality at different levels.
 
     Parameters
