@@ -88,7 +88,8 @@ logs/
 .env
 .env.*
 
-# Internal documentation
+# Internal documentation and scripts
 POETRY_MIGRATION.md
 POETRY_SUMMARY.md
 *TOKEN_INSTRUCTIONS.md
+update_github_token.sh

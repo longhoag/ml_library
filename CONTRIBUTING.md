@@ -125,6 +125,14 @@ The following documentation files are available:
 - **DISTRIBUTION.md**: Information about building and distributing the package
 - **GIT_WORKFLOW.md**: Git workflow guidelines for the project
 
+## Utility Scripts
+
+The repository includes several utility scripts:
+
+- **build_docs.sh**: Script for building the project documentation
+- **publish_package.sh**: Script for building and publishing the package to PyPI
+- **update_version.sh**: Script for updating the version number across the project
+
 ## License
 
 This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
