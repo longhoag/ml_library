@@ -2,6 +2,7 @@
 
 import os
 import tempfile
+from typing import Tuple
 
 import numpy as np
 import pytest
@@ -9,9 +10,12 @@ import pytest
 from ml_library.exceptions import NotFittedError
 from ml_library.models import LinearModel, LogisticModel, RandomForestModel
 
+# Type alias for sample data to reduce line length
+SampleData = Tuple[np.ndarray, np.ndarray, np.ndarray]
+
 
 @pytest.fixture
-def sample_data() -> tuple[np.ndarray, np.ndarray, np.ndarray]:
+def sample_data() -> Tuple[np.ndarray, np.ndarray, np.ndarray]:
     """Generate sample data for testing."""
     X = np.array([[1, 2], [3, 4], [5, 6], [7, 8]])
     y_reg = np.array([2, 4, 6, 8])  # Linear relationship for regression
@@ -27,7 +31,7 @@ def test_save_untrained_model() -> None:
             model.save(tmp.name)
 
 
-def test_save_load_linear_model(sample_data: tuple[np.ndarray, np.ndarray, np.ndarray]) -> None:
+def test_save_load_linear_model(sample_data: SampleData) -> None:
     """Test saving and loading a LinearModel."""
     X, y, _ = sample_data
 
@@ -72,7 +76,7 @@ def test_save_load_linear_model(sample_data: tuple[np.ndarray, np.ndarray, np.nd
             os.remove(model_path)
 
 
-def test_save_load_logistic_model(sample_data: tuple[np.ndarray, np.ndarray, np.ndarray]) -> None:
+def test_save_load_logistic_model(sample_data: SampleData) -> None:
     """Test saving and loading a LogisticModel."""
     X, _, y = sample_data
 
@@ -114,7 +118,7 @@ def test_save_load_logistic_model(sample_data: tuple[np.ndarray, np.ndarray, np.
             os.remove(model_path)
 
 
-def test_save_load_random_forest_model(sample_data: tuple[np.ndarray, np.ndarray, np.ndarray]) -> None:
+def test_save_load_random_forest_model(sample_data: SampleData) -> None:
     """Test saving and loading a RandomForestModel."""
     X, _, y = sample_data
 
@@ -163,7 +167,7 @@ def test_load_nonexistent_file() -> None:
         LinearModel.load(nonexistent_path)
 
 
-def test_load_wrong_model_type(sample_data: tuple[np.ndarray, np.ndarray, np.ndarray]) -> None:
+def test_load_wrong_model_type(sample_data: SampleData) -> None:
     """Test loading a model into the wrong class type raises ValueError."""
     X, y, _ = sample_data
 
