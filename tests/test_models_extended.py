@@ -1,5 +1,7 @@
 """Extended tests for linear models."""
 
+from typing import Tuple
+
 import numpy as np
 import pytest
 from sklearn.datasets import make_classification, make_regression
@@ -8,9 +10,12 @@ from sklearn.exceptions import NotFittedError as _SklearnNotFittedError  # noqa:
 from ml_library.exceptions import DataError, NotFittedError
 from ml_library.models import LinearModel, LogisticModel
 
+# Type aliases for test data
+ModelTestData = Tuple[np.ndarray, np.ndarray, np.ndarray, np.ndarray]
+
 
 @pytest.fixture
-def regression_data() -> tuple[np.ndarray, np.ndarray, np.ndarray, np.ndarray]:
+def regression_data() -> ModelTestData:
     """Generate sample regression data."""
     # make_regression can return coef as a third value which we don't need
     X, y, _ = make_regression(
@@ -26,7 +31,7 @@ def regression_data() -> tuple[np.ndarray, np.ndarray, np.ndarray, np.ndarray]:
 
 
 @pytest.fixture
-def classification_data() -> tuple[np.ndarray, np.ndarray, np.ndarray, np.ndarray]:
+def classification_data() -> ModelTestData:
     """Generate sample classification data."""
     X, y = make_classification(
         n_samples=100,
@@ -147,7 +152,7 @@ class TestLogisticModelErrors:
             _ = model.classes_
 
 
-def test_logistic_model_multiclass(classification_data) -> None:
+def test_logistic_model_multiclass(classification_data: ModelTestData) -> None:
     """Test LogisticModel with multiclass data."""
     # Rename local variable to avoid name shadowing with the fixture
     test_data = classification_data

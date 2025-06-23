@@ -1,14 +1,20 @@
 """Tests for ensemble models."""
 
+from typing import Tuple
+
 import numpy as np
 import pytest
 from sklearn.datasets import make_classification, make_regression
 
 from ml_library.models import RandomForestModel, RandomForestRegressorModel
 
+# Type alias for test data to reduce line length
+ClassificationTestData = Tuple[np.ndarray, np.ndarray, np.ndarray, np.ndarray]
+RegressionTestData = Tuple[np.ndarray, np.ndarray, np.ndarray, np.ndarray]
+
 
 @pytest.fixture
-def classification_data() -> tuple[np.ndarray, np.ndarray, np.ndarray, np.ndarray]:
+def classification_data() -> ClassificationTestData:
     """Generate sample classification data."""
     X, y = make_classification(
         n_samples=100, n_features=5, n_informative=3, n_redundant=1, random_state=42
@@ -19,7 +25,7 @@ def classification_data() -> tuple[np.ndarray, np.ndarray, np.ndarray, np.ndarra
 
 
 @pytest.fixture
-def regression_data() -> tuple[np.ndarray, np.ndarray, np.ndarray, np.ndarray]:
+def regression_data() -> RegressionTestData:
     """Generate sample regression data."""
     # make_regression can return coef as a third value which we don't need
     X, y, _ = make_regression(
@@ -86,7 +92,7 @@ class TestRandomForestRegressorErrors:
             _ = model.feature_importances_
 
 
-def test_random_forest_multiclass(classification_data) -> None:
+def test_random_forest_multiclass(classification_data: ClassificationTestData) -> None:
     """Test RandomForestModel with multiclass data."""
     # Rename local variable to avoid name shadowing with the fixture
     test_data = classification_data
